@@ -48,7 +48,9 @@ El código de Next.js vive en `perruqueria-realejo/`, pero el repositorio se pue
 importar en Vercel desde la raíz. Para evitar despliegues vacíos/404 cuando el
 proyecto de Vercel apunta al root del repo, la raíz incluye `vercel.json` con el
 builder `@vercel/next` apuntando a `perruqueria-realejo/package.json` y una ruta
-catch-all que envía todas las peticiones a esa app.
+catch-all cuyo destino es la zona Next completa (`perruqueria-realejo`), no una ruta
+interna con `$1`. Este formato coincide con el patrón multi-zone de Vercel y evita
+que `/` se resuelva como una ruta inexistente dentro del deploy.
 
 Si prefieres la configuración recomendada desde el panel de Vercel, ajusta
 **Root Directory = `perruqueria-realejo`** y deja el preset en **Next.js**; en ese
