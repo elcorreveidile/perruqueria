@@ -1,0 +1,22 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "version": 2,
+  "builds": [
+    {
+      "src": "perruqueria-realejo/package.json",
+      "use": "@vercel/next"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "perruqueria-realejo/$1"
+    }
+  ],
+  "crons": [
+    {
+      "path": "/api/cron/emails",
+      "schedule": "0 8 * * *"
+    }
+  ]
+}
