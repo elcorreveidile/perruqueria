@@ -1,9 +1,4 @@
-# robots.txt para DEMO
-# Este sitio es una propuesta comercial NO oficial
-# No indexar hasta que el cliente apruebe y pase a producción
-
+# DEMO de propuesta comercial: bloqueado para rastreadores.
+# Al pasar a producción, sustituir por un robots.txt permisivo.
 User-agent: *
 Disallow: /
-
-# Sitemap (comentar cuando pase a producción)
-# Sitemap: https://perruqueriarealejo.com/sitemap.xml

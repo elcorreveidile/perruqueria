@@ -1,210 +1,84 @@
-/**
- * Página de Filosofía
- *
- * "Peluquería canina en positivo" — Alma de la marca
- */
+import type { Metadata } from "next";
+import Image from "next/image";
+import Link from "next/link";
 
-export const metadata = {
-  title: "Filosofía | Perruquería Canina Realejo",
+export const metadata: Metadata = {
+  title: "Filosofía en positivo",
   description:
-    "Manejo sin miedo ni estrés. Productos veganos. Peluquería canina en positivo en Granada.",
+    "Qué significa una peluquería canina en positivo: manejo sin estrés, productos veganos y respeto por cada perro.",
 };
 
 export default function FilosofiaPage() {
   return (
-    <div className="min-h-screen bg-cream py-12 px-4">
-      <div className="container-custom max-w-3xl">
-        {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="font-display text-4xl md:text-5xl font-semibold mb-4">
-            Peluquería canina{" "}
-            <span className="text-emphasis">en positivo</span>
-          </h1>
-          <p className="text-lg text-ink/70">
-            No vendemos baños, cortes ni uñas. Vendemos que tu perro entre
-            tranquilo y salga feliz.
+    <div className="mx-auto max-w-3xl px-4 py-12">
+      <h1 className="text-4xl">
+        Peluquería <em className="text-coral">en positivo</em>
+      </h1>
+      <p className="mt-4 text-lg text-tinta-suave">
+        No es un eslogan: es la forma de trabajar de esta casa. Aquí está el alma de la
+        Perruquería, contada sin rodeos.
+      </p>
+
+      <div className="mt-8 overflow-hidden rounded-3xl shadow-lg">
+        <Image
+          src="https://images.unsplash.com/photo-1552053831-71594a27632d?w=1200&q=75"
+          alt="Perro tranquilo y confiado (imagen de muestra)"
+          width={1200}
+          height={700}
+          className="h-64 w-full object-cover sm:h-80"
+        />
+      </div>
+      <p className="mt-2 text-right text-xs text-tinta-suave">Imagen de muestra</p>
+
+      <section className="mt-10 space-y-8">
+        <div>
+          <h2 className="text-2xl">Manejo sin miedo ni estrés</h2>
+          <p className="mt-3 text-tinta-suave">
+            Un perro no entiende qué es una peluquería: solo siente lo que pasa allí. Por eso
+            cada sesión empieza despacio, con olfateo, premios y voz tranquila. Nunca se
+            sujeta a la fuerza ni se «aguanta» a un perro asustado para terminar antes. Si
+            hace falta parar, se para. Si hace falta repartir el trabajo en dos visitas, se
+            reparte.
           </p>
         </div>
 
-        {/* Sección principal */}
-        <section className="bg-white rounded-lg shadow-md p-8 mb-8">
-          <h2 className="font-display text-2xl md:text-3xl font-semibold mb-6 text-sky">
-            ¿Qué significa "en positivo"?
-          </h2>
-
-          <div className="prose prose-lg max-w-none">
-            <p className="text-ink/80 leading-relaxed mb-4">
-              La mayoría de las peluquerías caninas se enfocan en el resultado:
-              el perro sale bonito, limpio y con buen olor. Eso está bien, pero
-              no es suficiente.
-            </p>
-
-            <p className="text-ink/80 leading-relaxed mb-4">
-              Para nosotros, <strong>lo más importante es la experiencia del
-              perro</strong>. Un perro que tiene miedo de la peluquería es un
-              perro que sufre cada vez que viene. Y eso no es aceptable.
-            </p>
-
-            <p className="text-ink/80 leading-relaxed">
-              "En positivo" significa que trabajamos para que cada visita sea una
-              experiencia agradable, sin miedos, sin estrés y con muchísimo
-              cariño. El resultado estético viene consecuencia de ese proceso.
-            </p>
-          </div>
-        </section>
-
-        {/* 3 pilares */}
-        <section className="space-y-6 mb-12">
-          {/* Pilar 1 */}
-          <div className="bg-white rounded-lg shadow-md p-8">
-            <div className="flex items-start gap-4">
-              <div className="w-12 h-12 bg-sky/20 rounded-full flex items-center justify-center flex-shrink-0">
-                <svg
-                  className="w-6 h-6 text-sky"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
-                  />
-                </svg>
-              </div>
-              <div>
-                <h3 className="font-display text-xl font-semibold mb-3">
-                  Sin miedo ni estrés
-                </h3>
-                <p className="text-ink/70 leading-relaxed">
-                  Usamos técnicas de refuerzo positivo y muchísima paciencia.
-                  Acostumbramos al perro al sonido del secador, a que le toquen las
-                  patas, a que le limpien las orejas. Nunca forzamos. Si un perro
-                  necesita un descanso, paramos. Si un perro no puede terminar una
-                  sesión en un día, volvemos al día siguiente. El bienestar del perro
-                  está por encima de todo.
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Pilar 2 */}
-          <div className="bg-white rounded-lg shadow-md p-8">
-            <div className="flex items-start gap-4">
-              <div className="w-12 h-12 bg-sage/20 rounded-full flex items-center justify-center flex-shrink-0">
-                <svg
-                  className="w-6 h-6 text-sage"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
-                  />
-                </svg>
-              </div>
-              <div>
-                <h3 className="font-display text-xl font-semibold mb-3">
-                  Productos veganos
-                </h3>
-                <p className="text-ink/70 leading-relaxed">
-                  Todos los shampoos, acondicionadores y tratamientos que usamos
-                  son <strong>100% veganos y cruelty-free</strong>. No contienen
-                  ingredientes de origen animal ni han sido testados en animales.
-                  Son seguros para perros con piel sensible, alergias o condiciones
-                  dermatológicas. Y funcionan de verdad.
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Pilar 3 */}
-          <div className="bg-white rounded-lg shadow-md p-8">
-            <div className="flex items-start gap-4">
-              <div className="w-12 h-12 bg-coral/20 rounded-full flex items-center justify-center flex-shrink-0">
-                <svg
-                  className="w-6 h-6 text-coral"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
-              </div>
-              <div>
-                <h3 className="font-display text-xl font-semibold mb-3">
-                  Sin prisas
-                </h3>
-                <p className="text-ink/70 leading-relaxed">
-                  Cada perro es único. Algunos se relajan rápido, otros necesitan más
-                  tiempo. Nosotros no tenemos prisa. Si un perro pequeño necesita 30
-                  minutos, le dedicamos 30 minutos. Si un perro grande necesita 2
-                  horas, le dedicamos 2 horas. La calidad está por encima de la
-                  cantidad.
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Para perros con miedo */}
-        <section className="bg-sage/10 rounded-lg p-8 mb-8">
-          <h2 className="font-display text-2xl md:text-3xl font-semibold mb-4">
-            ¿Tu perro tiene miedo de la peluquería?
-          </h2>
-          <p className="text-ink/80 leading-relaxed mb-6">
-            Es más común de lo que piensas. Muchos perros han tenido malas
-            experiencias: ruidos fuertes, manos bruscas, mucho tiempo sin ver a
-            sus dueños. Eso genera trauma. Y el trauma se cura con paciencia, no
-            con fuerza.
+        <div>
+          <h2 className="text-2xl">¿Y si mi perro tiene miedo?</h2>
+          <p className="mt-3 text-tinta-suave">
+            Entonces este es su sitio. Los perros con malas experiencias necesitan reescribir
+            lo que significa la peluquería, y eso se consigue con psicología, paciencia y
+            sesiones de habituación a su medida. No es magia ni es rápido, pero funciona: el
+            día que tu perro entra moviendo el rabo, lo entiendes todo.
           </p>
-          <p className="text-ink/80 leading-relaxed mb-6">
-            Si tu perro tiene miedo, <strong>háblanos</strong>. Podemos hacer una
-            primera visita de habituación muy corta (10-15 minutos) solo para que
-            conozca el lugar, que le demos premios, que vea que no pasa nada malo.
-            Poco a poco, va perdiendo el miedo.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4">
-            <a
-              href="/reserva"
-              className="px-6 py-3 bg-sage text-ink rounded-lg font-semibold hover:bg-sage/90 transition-colors text-center"
-            >
-              Agenda una visita de habituación
-            </a>
-            <a
-              href="/contacto"
-              className="px-6 py-3 bg-ink text-white rounded-lg font-semibold hover:bg-ink/90 transition-colors text-center"
-            >
-              Háblanos de tu caso
-            </a>
-          </div>
-        </section>
+        </div>
 
-        {/* CTA final */}
-        <section className="text-center">
-          <h2 className="font-display text-2xl md:text-3xl font-semibold mb-4">
-            ¿Te gustaría que tu perro disfrutara de la peluquería?
-          </h2>
-          <p className="text-ink/70 mb-8">
-            Agenda una cita y verás la diferencia. No es magia, es cariño y
-            paciencia.
+        <div>
+          <h2 className="text-2xl">Productos específicos veganos 🌱</h2>
+          <p className="mt-3 text-tinta-suave">
+            Usamos champús y tratamientos veganos, elegidos por su suavidad con la piel y su
+            respeto por los animales y el planeta. Cada manto y cada piel recibe su producto:
+            calmante para pieles sensibles, específico para deslanados, suave para cachorros.
           </p>
-          <a
-            href="/reserva"
-            className="inline-flex px-8 py-4 bg-coral text-white rounded-lg font-semibold hover:bg-coral/90 transition-colors"
-          >
-            Reserva tu cita
-          </a>
-        </section>
+        </div>
+
+        <div className="rounded-3xl bg-cielo-claro p-7">
+          <h2 className="text-2xl">Lo que esto significa para ti</h2>
+          <ul className="lista-huellas mt-4 space-y-3 text-sm">
+            <li>Tu perro no «sobrevive» a la peluquería: la disfruta (o aprende a hacerlo).</li>
+            <li>Te contamos siempre cómo ha ido la sesión, sin maquillar nada.</li>
+            <li>Si un servicio no le conviene, te lo decimos aunque perdamos la venta.</li>
+            <li>El acabado importa, pero su bienestar importa más.</li>
+          </ul>
+        </div>
+      </section>
+
+      <div className="mt-10 flex flex-wrap gap-3">
+        <Link href="/calculadora" className="rounded-full bg-coral px-6 py-3 font-bold text-white hover:bg-coral-oscuro">
+          Calcula tu tarifa
+        </Link>
+        <Link href="/reservas" className="rounded-full border-2 border-tinta/15 bg-white px-6 py-3 font-bold hover:border-coral hover:text-coral">
+          Reserva cita
+        </Link>
       </div>
     </div>
   );

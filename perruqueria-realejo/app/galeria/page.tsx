@@ -1,205 +1,56 @@
-/**
- * Página de Galería
- *
- * Antes/después (placeholder para fotos reales del cliente)
- */
+import type { Metadata } from "next";
+import Image from "next/image";
 
-export const metadata = {
-  title: "Galería | Perruquería Canina Realejo",
-  description:
-    "Antes y después de nuestros servicios. Próximamente con fotos reales de nuestros peludos felices.",
+export const metadata: Metadata = {
+  title: "Galería de peludos felices",
+  description: "Antes y después de nuestros peludos. Perros que entran tranquilos y salen felices.",
 };
 
-export default function GaleríaPage() {
+// Imágenes de stock (Unsplash) claramente marcadas como muestra.
+// Al pasar a producción se sustituyen por fotos reales del Instagram
+// de la clienta (310 publicaciones: su mejor activo).
+const fotos = [
+  { src: "https://images.unsplash.com/photo-1552053831-71594a27632d?w=700&q=70", alt: "Golden retriever cachorro" },
+  { src: "https://images.unsplash.com/photo-1537151625747-768eb6cf92b2?w=700&q=70", alt: "Perro pequeño atento" },
+  { src: "https://images.unsplash.com/photo-1518717758536-85ae29035b6d?w=700&q=70", alt: "Perro marrón sonriente" },
+  { src: "https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=700&q=70", alt: "Corgi feliz" },
+  { src: "https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=700&q=70", alt: "Dos perros paseando" },
+  { src: "https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=700&q=70", alt: "Perro con sus humanos" },
+  { src: "https://images.unsplash.com/photo-1530281700549-e82e7bf110d6?w=700&q=70", alt: "Perro tumbado relajado" },
+  { src: "https://images.unsplash.com/photo-1576201836106-db1758fd1c97?w=700&q=70", alt: "Perro durante su cuidado" },
+];
+
+export default function GaleriaPage() {
   return (
-    <div className="min-h-screen bg-cream py-12 px-4">
-      <div className="container-custom">
-        {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="font-display text-4xl md:text-5xl font-semibold mb-4">
-            Galería de{" "}
-            <span className="text-emphasis">transformaciones</span>
-          </h1>
-          <p className="text-lg text-ink/70 max-w-2xl mx-auto">
-            Próximamente mostraremos fotos reales de antes y después de nuestros
-            servicios. Mientras tanto, puedes ver nuestros resultados en{" "}
-            <a
-              href="https://www.instagram.com/perruqueriacaninarealejo"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-sky hover:text-coral transition-colors underline"
-            >
-              nuestro Instagram
-            </a>
-            .
-          </p>
-        </div>
+    <div className="mx-auto max-w-6xl px-4 py-12">
+      <header className="max-w-2xl">
+        <h1 className="text-4xl">Perros felices 🐾</h1>
+        <p className="mt-3 text-tinta-suave">
+          El antes y el después importa, pero lo que más nos gusta enseñar es la cara con la
+          que salen. Esta galería está preparada para llenarse con fotos reales de nuestros
+          peludos.
+        </p>
+        <p className="mt-3 rounded-xl bg-cielo-claro px-4 py-2 text-xs font-semibold text-tinta-suave">
+          ℹ️ Todas las imágenes de esta página son de muestra (banco de imágenes). En la web
+          definitiva se sustituirán por fotos reales con permiso de sus familias.
+        </p>
+      </header>
 
-        {/* Placeholder avisando que son imágenes de muestra */}
-        <div className="bg-sky/10 border border-sky/30 rounded-lg p-6 mb-12">
-          <div className="flex items-start gap-3">
-            <svg
-              className="w-6 h-6 text-sky flex-shrink-0 mt-0.5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
-            <div>
-              <p className="font-medium text-ink mb-1">Imagen de muestra</p>
-              <p className="text-sm text-ink/70">
-                Esta es una página de demostración. Las fotografías reales de antes
-                y después se añadirán cuando la clienta apruebe el diseño. Por
-                ahora puedes ver nuestros resultados en nuestro perfil de Instagram
-                con más de 300 publicaciones.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Grid de placeholders (dividido por categorías) */}
-        <div className="space-y-12">
-          {/* Baño completo */}
-          <section>
-            <h2 className="font-display text-2xl md:text-3xl font-semibold mb-6 text-sky">
-              🛁 Baño completo
-            </h2>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <PlaceholderCard
-                tipo="Baño + secado"
-                descripcion="Ejemplo: Labrador con pelo sucio y enredado"
-              />
-              <PlaceholderCard
-                tipo="Baño + secado"
-                descripcion="Ejemplo: Golden Retriever tras una vuelta al campo"
-              />
-              <PlaceholderCard
-                tipo="Baño + secado"
-                descripcion="Ejemplo: Perro mix con pelo muy enredado"
-              />
-            </div>
-          </section>
-
-          {/* Corte y estilismo */}
-          <section>
-            <h2 className="font-display text-2xl md:text-3xl font-semibold mb-6 text-sky">
-              ✂️ Corte y estilismo
-            </h2>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <PlaceholderCard
-                tipo="Corte mantenimiento"
-                descripcion="Ejemplo: Caniche antes y después del corte"
-              />
-              <PlaceholderCard
-                tipo="Corte comercial"
-                descripcion="Ejemplo: Bichón con corte práctico"
-              />
-              <PlaceholderCard
-                tipo="Arreglo por raza"
-                descripcion="Ejemplo: Westie con patrón de raza"
-              />
-            </div>
-          </section>
-
-          {/* Pelo especial */}
-          <section>
-            <h2 className="font-display text-2xl md:text-3xl font-semibold mb-6 text-sky">
-              🐕 Pelo especial
-            </h2>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <PlaceholderCard
-                tipo="Deslanado"
-                descripcion="Ejemplo: Husky antes y después del deslanado"
-              />
-              <PlaceholderCard
-                tipo="Stripping"
-                descripcion="Ejemplo: Terrier con stripping profesional"
-              />
-              <PlaceholderCard
-                tipo="Desenredado"
-                descripcion="Ejemplo: Cocker antes y después del desenredado"
-              />
-            </div>
-          </section>
-
-          {/* Cachorros */}
-          <section>
-            <h2 className="font-display text-2xl md:text-3xl font-semibold mb-6 text-sky">
-              🐾 Cachorros
-            </h2>
-            <div className="grid md:grid-cols-2 gap-6">
-              <PlaceholderCard
-                tipo="Primera visita"
-                descripcion="Ejemplo: Cachorro de 3 meses en su primera experiencia"
-              />
-              <PlaceholderCard
-                tipo="Habituación"
-                descripcion="Ejemplo: Cachorro aprendiendo a disfrutar de la peluquería"
-              />
-            </div>
-          </section>
-        </div>
-
-        {/* CTA */}
-        <div className="mt-16 text-center">
-          <div className="bg-sage/10 rounded-lg p-8 max-w-2xl mx-auto">
-            <h2 className="font-display text-2xl font-semibold mb-4">
-              ¿Quieres que tu peludo luzca así de bien?
-            </h2>
-            <p className="text-ink/70 mb-6">
-              Agenda una cita y verás la diferencia. Cada peludo es único, y
-              nosotros tratamos a cada uno como si fuera de la familia.
-            </p>
-            <a
-              href="/reserva"
-              className="inline-flex px-8 py-4 bg-coral text-white rounded-lg font-semibold hover:bg-coral/90 transition-colors"
-            >
-              Reserva tu cita
-            </a>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// Componente placeholder para cada tarjeta
-function PlaceholderCard({
-  tipo,
-  descripcion,
-}: {
-  tipo: string;
-  descripcion: string;
-}) {
-  return (
-    <div className="bg-white rounded-lg shadow-md overflow-hidden">
-      <div className="aspect-square bg-gradient-to-br from-sky/20 to-sage/20 flex items-center justify-center">
-        <div className="text-center">
-          <svg
-            className="w-16 h-16 mx-auto text-sky/40"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+      <div className="mt-8 grid grid-cols-2 gap-4 md:grid-cols-4">
+        {fotos.map((f) => (
+          <figure key={f.src} className="group relative overflow-hidden rounded-2xl">
+            <Image
+              src={f.src}
+              alt={`${f.alt} (imagen de muestra)`}
+              width={700}
+              height={700}
+              className="aspect-square w-full object-cover transition-transform group-hover:scale-105"
             />
-          </svg>
-          <p className="text-sm text-ink/60 mt-2">Imagen de muestra</p>
-        </div>
-      </div>
-      <div className="p-4">
-        <h3 className="font-display font-semibold text-lg mb-2">{tipo}</h3>
-        <p className="text-sm text-ink/60">{descripcion}</p>
+            <figcaption className="absolute bottom-0 w-full bg-tinta/60 px-3 py-1.5 text-center text-[11px] font-semibold text-white">
+              Imagen de muestra
+            </figcaption>
+          </figure>
+        ))}
       </div>
     </div>
   );

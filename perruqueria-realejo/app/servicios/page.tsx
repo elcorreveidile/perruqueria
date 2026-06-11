@@ -1,67 +1,43 @@
-/**
- * Página de Servicios
- *
- * Catálogo filtrable por categoría
- */
+import type { Metadata } from "next";
+import { getPriceRows, getServices } from "@/lib/data";
+import { ETIQUETA_ORIENTATIVO } from "@/lib/site";
+import { Catalogo } from "@/components/services/Catalogo";
 
-import { Suspense } from "react";
-import ServicesGrid from "@/components/services/ServicesGrid";
-
-// Marcar como dinámica para no prerender en build
-export const dynamic = 'force-dynamic';
-
-export const metadata = {
-  title: "Servicios | Perruquería Canina Realejo",
+export const metadata: Metadata = {
+  title: "Servicios de peluquería canina",
   description:
-    "Catálogo completo de servicios: baños, cortes, tratamientos dermatológicos y más. Productos veganos y manejo en positivo.",
+    "Baños, cortes, deslanados y tratamientos para piel sensible. Todo en positivo y con productos veganos.",
 };
 
-export default function ServiciosPage() {
+export const dynamic = "force-dynamic";
+
+export default async function ServiciosPage() {
+  const [services, prices] = await Promise.all([getServices(), getPriceRows()]);
+
+  // Rango global por servicio para mostrar "desde"
+  const rangos = Object.fromEntries(
+    services.map((s) => {
+      const filas = prices.filter((p) => p.service_id === s.id);
+      if (filas.length === 0) return [s.id, null];
+      const min = Math.min(...filas.map((f) => f.precio_min));
+      const real = filas.every((f) => f.es_precio_real);
+      return [s.id, { min, real }];
+    })
+  );
+
   return (
-    <div className="min-h-screen bg-cream py-12 px-4">
-      <div className="container-custom">
-        {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="font-display text-4xl md:text-5xl font-semibold mb-4">
-            Nuestros <span className="text-emphasis">servicios</span>
-          </h1>
-          <p className="text-lg text-ink/70 max-w-2xl mx-auto">
-            Todo lo que tu peludo necesita, con productos veganos y mucho cariño.
-            Cada servicio está pensado para que sea una experiencia positiva.
-          </p>
-        </div>
-
-        {/* Grid de servicios */}
-        <Suspense
-          fallback={
-            <div className="text-center py-12">
-              <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-sky"></div>
-              <p className="mt-4 text-ink/60">Cargando servicios...</p>
-            </div>
-          }
-        >
-          <ServicesGrid />
-        </Suspense>
-
-        {/* CTA */}
-        <div className="mt-16 text-center">
-          <div className="bg-sky/10 rounded-lg p-8 max-w-2xl mx-auto">
-            <h2 className="font-display text-2xl md:text-3xl font-semibold mb-4">
-              ¿No estás seguro qué necesita tu peludo?
-            </h2>
-            <p className="text-ink/70 mb-6">
-              Usa nuestra calculadora de tarifas para obtener un precio
-              orientativo en menos de 1 minuto.
-            </p>
-            <a
-              href="/calculadora"
-              className="inline-flex px-8 py-4 bg-sky text-ink rounded-lg font-semibold hover:bg-sky/90 transition-colors"
-            >
-              Calcula tu tarifa
-            </a>
-          </div>
-        </div>
-      </div>
+    <div className="mx-auto max-w-6xl px-4 py-12">
+      <header className="max-w-2xl">
+        <h1 className="text-4xl">Servicios</h1>
+        <p className="mt-3 text-tinta-suave">
+          Cada servicio se hace al ritmo de tu perro, con productos veganos y manejo en
+          positivo. Elige el suyo o pregúntanos: te aconsejamos sin compromiso.
+        </p>
+        <p className="mt-3 rounded-xl bg-cielo-claro px-4 py-2 text-xs font-semibold text-tinta-suave">
+          ℹ️ {ETIQUETA_ORIENTATIVO}
+        </p>
+      </header>
+      <Catalogo services={services} rangos={rangos} />
     </div>
   );
 }
