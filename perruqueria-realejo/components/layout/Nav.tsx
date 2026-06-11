@@ -13,23 +13,16 @@ export default function Nav() {
       <div className="container-custom py-4">
         <div className="flex items-center justify-between gap-4">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-3 group">
-            <div className="relative w-12 h-12">
+          <Link href="/" className="group">
+            <div className="relative h-16 w-auto">
               <Image
-                src="/favicon.png"
-                alt="Huella de burbujas"
-                width={48}
-                height={48}
-                className="transition-transform group-hover:scale-110"
+                src="/header.png"
+                alt="Perruquería Canina Realejo - Peluquería en positivo"
+                width={200}
+                height={64}
+                className="h-16 w-auto object-contain transition-transform group-hover:scale-105"
+                priority
               />
-            </div>
-            <div className="flex flex-col">
-              <span className="font-display font-semibold text-foreground text-lg">
-                Perruquería Canina Realejo
-              </span>
-              <span className="text-xs text-sage font-medium">
-                Peluquería en positivo
-              </span>
             </div>
           </Link>
 
