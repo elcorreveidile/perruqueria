@@ -1,0 +1,11 @@
+{
+  "name": "perruqueria",
+  "private": true,
+  "packageManager": "npm@10.9.2",
+  "scripts": {
+    "dev": "npm run dev --prefix perruqueria-realejo",
+    "build": "npm run build --prefix perruqueria-realejo",
+    "start": "npm run start --prefix perruqueria-realejo",
+    "lint": "npm run lint --prefix perruqueria-realejo"
+  }
+}
