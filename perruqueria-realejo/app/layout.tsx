@@ -1,121 +1,77 @@
 import type { Metadata } from "next";
+import { Fraunces, Nunito_Sans } from "next/font/google";
+import { Header } from "@/components/layout/Header";
+import { Footer } from "@/components/layout/Footer";
+import { DemoBanner } from "@/components/layout/DemoBanner";
+import { WhatsAppFloat } from "@/components/layout/WhatsAppFloat";
+import { SITE } from "@/lib/site";
 import "./globals.css";
-import Nav from "@/components/layout/Nav";
-import Footer from "@/components/layout/Footer";
-import DemoBanner from "@/components/layout/DemoBanner";
+
+const fraunces = Fraunces({
+  subsets: ["latin"],
+  style: ["normal", "italic"],
+  weight: ["500", "600"],
+  variable: "--font-fraunces",
+  display: "swap",
+});
+
+const nunito = Nunito_Sans({
+  subsets: ["latin"],
+  weight: ["400", "600", "700", "800"],
+  variable: "--font-nunito",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
-  metadataBase: new URL(
-    process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"
-  ),
+  metadataBase: new URL(SITE.url),
   title: {
-    default: "Perruquería Canina Realejo — Peluquería canina en positivo",
-    template: "%s | Perruquería Canina Realejo",
+    default: `${SITE.nombre} — Peluquería canina en positivo en Granada`,
+    template: `%s · ${SITE.nombre}`,
   },
   description:
-    "Peluquería canina en Granada. Sin prisas. Sin miedo. Sin estrés. Productos veganos. Baños, cortes y tratamientos dermatológicos para tu perro en el barrio del Realejo.",
-  keywords: [
-    "peluquería canina Granada",
-    "peluquería perro Realejo",
-    "baño perro Granada",
-    "corte perro",
-    "grooming Granada",
-    "peluquería canina en positivo",
-    "productos veganos perros",
-  ],
-  authors: [{ name: "Por 2 Duros", url: "https://por2duros.com" }],
-  creator: "Por 2 Duros",
-  publisher: "Por 2 Duros",
-
-  // NOINDEX para demo
-  robots: {
-    index: false,
-    follow: false,
-    googleBot: {
-      index: false,
-      follow: false,
-    },
-  },
-
-  // Open Graph
+    "Peluquería canina en positivo en el Realejo, Granada. Sin prisas, sin miedo, sin estrés. Baños, cortes y tratamientos con productos veganos.",
+  // DEMO: el sitio no debe indexarse hasta el paso a producción.
+  robots: { index: false, follow: false },
   openGraph: {
-    type: "website",
+    title: `${SITE.nombre} — Peluquería canina en positivo`,
+    description: "Sin prisas. Sin miedo. Sin estrés. Peluquería canina con productos veganos en el Realejo, Granada.",
     locale: "es_ES",
-    url: "https://perruqueria-realejo-demo.vercel.app",
-    title: "Perruquería Canina Realejo — Peluquería canina en positivo",
-    description:
-      "Peluquería canina en Granada. Sin prisas. Sin miedo. Sin estrés. Productos veganos.",
-    siteName: "Perruquería Canina Realejo",
-    images: [
-      {
-        url: "/header.png",
-        width: 1200,
-        height: 630,
-        alt: "Perruquería Canina Realejo",
-      },
-    ],
+    type: "website",
+    siteName: SITE.nombre,
   },
-
-  // Twitter Card
-  twitter: {
-    card: "summary_large_image",
-    title: "Perruquería Canina Realejo — Peluquería canina en positivo",
-    description:
-      "Peluquería canina en Granada. Sin prisas. Sin miedo. Sin estrés. Productos veganos.",
-    images: ["/header.png"],
-  },
-
-  // Schema.org LocalBusiness
-  other: {
-    "application/ld+json": JSON.stringify({
-      "@context": "https://schema.org",
-      "@type": "LocalBusiness",
-      name: "Perruquería Canina Realejo",
-      description:
-        "Peluquería canina en positivo. Sin prisas. Sin miedo. Sin estrés. Productos veganos.",
-      address: {
-        "@type": "PostalAddress",
-        streetAddress: "C. Molinos 47, Local",
-        addressLocality: "Granada",
-        postalCode: "18009",
-        addressCountry: "ES",
-      },
-      geo: {
-        "@type": "GeoCoordinates",
-        latitude: 37.1769,
-        longitude: -3.5968,
-      },
-      telephone: "+34600000000",
-      openingHoursSpecification: {
-        "@type": "OpeningHoursSpecification",
-        dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-        opens: "10:00",
-        closes: "17:45",
-      },
-      priceRange: "€€",
-    }),
-  },
-
-  // Icons
-  icons: {
-    icon: "/favicon.png",
-    apple: "/favicon.png",
-  },
-  manifest: "/manifest.json",
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  additionalType: "https://schema.org/PetGrooming",
+  name: SITE.nombre,
+  slogan: "Peluquería canina en positivo",
+  address: {
+    "@type": "PostalAddress",
+    streetAddress: "Calle Molinos 47, Local",
+    addressLocality: "Granada",
+    postalCode: "18009",
+    addressCountry: "ES",
+  },
+  areaServed: "Granada",
+  url: SITE.url,
+  sameAs: [SITE.instagram],
+};
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="es" className="h-full antialiased">
-      <body className="min-h-full flex flex-col">
-        <Nav />
+    <html lang="es" className={`${fraunces.variable} ${nunito.variable}`}>
+      <body className="flex min-h-screen flex-col antialiased">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+        <Header />
         <main className="flex-1">{children}</main>
-        <DemoBanner />
         <Footer />
+        <WhatsAppFloat />
+        <DemoBanner />
       </body>
     </html>
   );

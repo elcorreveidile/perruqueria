@@ -1,266 +1,136 @@
-# Perruquería Canina Realejo — Demo Web
+# Perruquería Canina Realejo — demo de propuesta comercial
 
-Demo de propuesta comercial para peluquería canina en Granada.
+Demo funcional de web para **Perruquería Canina Realejo** (C. Molinos 47, barrio del
+Realejo, Granada): peluquería canina **en positivo**, con productos veganos. Construida
+por [Por 2 Duros](https://por2duros.com) como propuesta — **no es el sitio oficial** y no
+existe todavía relación contractual con el negocio.
 
-## 🎯 Objetivo
+**Stack:** Next.js 15 (App Router) · TypeScript · Tailwind CSS 4 · Supabase (datos +
+Auth) · Resend (emails) · Vercel (despliegue + cron).
 
-Demo funcional para mostrarle a la clienta un sitio web completo con:
-- **Calculadora de tarifas interactiva** (pieza estrella)
-- **Catálogo de servicios** filtrable por categoría
-- **Filosofía "Peluquería en positivo"** (posicionamiento de marca)
-- **Páginas secundarias** completas (galería, contacto, legal)
-- **Banner de demo** con atribución a Por 2 Duros
+## Qué incluye
 
-## 🚀 Stack Técnico
+- **Home** con el posicionamiento de marca («Sin prisas. Sin miedo. Sin estrés.»), prueba
+  social genérica (4,7★), método, FAQ y mapa.
+- **Catálogo de servicios** filtrable por categoría (13 servicios en 5 categorías), con
+  ficha por servicio y tabla de precios orientativos.
+- **Calculadora de tarifas** (pieza estrella): wizard de 4 pasos → rango orientativo +
+  duración + CTA a reserva o WhatsApp con resumen precargado + envío por email.
+- **Reservas online** con calendario real: huecos generados desde reglas de
+  disponibilidad − bloqueos − citas, margen entre citas, antelación mínima y horizonte
+  máximo configurables. **Anti-solapamiento garantizado a nivel de base de datos**
+  (constraint de exclusión de Postgres). Cancelación por enlace tokenizado y lista de
+  espera con aviso automático.
+- **Fidelización automática:** recordatorio 24 h antes (Vercel Cron + Resend) y
+  «recurrencia inteligente»: al marcar una cita como completada se programa el email «a
+  [perro] ya le toca» con re-reserva en un clic.
+- **/admin** (Supabase Auth): agenda semanal, confirmar/cancelar/completar/no-show,
+  bloqueos de vacaciones en dos toques, CRUD de servicios y matriz de precios, leads con
+  export CSV, panel de previsualización de emails programados y ajustes.
+- **Modo demo transparente:** `noindex` + `robots.txt` bloqueado, banner fijo de demo,
+  todos los emails desviados a una dirección de pruebas, registros con `demo = true`.
 
-- **Next.js 15** (App Router) + TypeScript + Tailwind CSS
-- **Neon PostgreSQL** (base de datos)
-- **Resend** (emails transaccionales)
-- **Vercel** (hosting)
+> La web pública funciona **incluso sin Supabase configurado** (usa los datos de muestra
+> embebidos de `lib/seed-data.ts`); el panel /admin y la persistencia requieren Supabase.
 
-## 📦 Instalación
+## Instalación
 
 ```bash
-# Instalar dependencias
 npm install
-
-# Copiar variables de entorno
-cp .env.example .env.local
-
-# Configurar variables (ver abajo)
-# Editar .env.local con tus datos reales
-
-# Desarrollo
+cp .env.example .env.local   # rellena las variables
 npm run dev
-
-# Build de producción
-npm run build
-
-# Start producción
-npm start
 ```
 
-## 🔐 Variables de Entorno
+### Variables de entorno
 
-### Neon PostgreSQL (Base de datos)
+| Variable | Descripción |
+| --- | --- |
+| `NEXT_PUBLIC_SUPABASE_URL` | URL del proyecto Supabase |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Clave anónima (solo para Auth del panel) |
+| `SUPABASE_SERVICE_ROLE_KEY` | Clave service_role (solo servidor) |
+| `RESEND_API_KEY` | API key de Resend |
+| `EMAIL_FROM` | Remitente verificado en Resend |
+| `DEMO_MODE` | `true` (por defecto): desvía todos los emails |
+| `DEMO_EMAIL_TO` | Dirección de pruebas que recibe todo en demo |
+| `CRON_SECRET` | Protege `/api/cron/emails` |
+| `NEXT_PUBLIC_SITE_URL` | URL pública del despliegue |
+| `NEXT_PUBLIC_WHATSAPP` | Número de WhatsApp (placeholder en demo) |
 
-```env
-DATABASE_URL=postgresql://usuario:password@ep-xxx.region.aws.neon.tech/neondb?sslmode=require
-```
+### Base de datos (Supabase)
 
-**Cómo obtener**:
-1. Ve a [https://console.neon.tech](https://console.neon.tech)
-2. Crea un proyecto nuevo
-3. Copia el Connection String
-4. Ejecuta los archivos SQL del directorio `/supabase` en este orden:
-   - `migrations/001_initial_schema.sql`
-   - `seeds/001_services.sql`
-   - `seeds/002_prices.sql`
-   - `seeds/003_availability.sql`
-   - `seeds/004_example_bookings.sql`
+1. Crea un proyecto en [supabase.com](https://supabase.com).
+2. En el editor SQL ejecuta, por este orden:
+   - `supabase/migrations/0001_schema.sql` (esquema + constraint anti-solapamiento + RLS)
+   - `supabase/seed.sql` (13 servicios, matriz de precios completa, horario L–V
+     10:00–17:45 y 7 reservas de ejemplo en distintos estados)
+3. Crea la usuaria admin: **Authentication → Users → Add user**
+   - Email: `demo@por2duros.com` · Contraseña: `PerruqueriaDemo2026!` · Auto-confirm ✔
+   - (Credenciales de demo: cámbialas en cuanto la propuesta esté enseñada.)
 
-### Resend (Emails)
+### Cron de recordatorios
 
-```env
-RESEND_API_KEY=re_xxxxxxxxxxxxx
-RESEND_FROM_EMAIL=tu-email@verificado.com
-RESEND_TO_EMAIL_DEMO=demo@tudominio.com
-```
-
-**Cómo obtener**:
-1. Ve a [https://resend.com](https://resend.com)
-2. Crea un API key
-3. Verifica tu dominio de envío
-
-### Otros
-
-```env
-NEXT_PUBLIC_APP_URL=http://localhost:3000
-NEXT_PUBLIC_IS_DEMO=true
-```
-
-## 🌐 Despliegue en Vercel
-
-### Opción 1: Automático desde GitHub
-
-1. Sube este repositorio a GitHub
-2. Ve a [Vercel](https://vercel.com)
-3. "Import Project" desde GitHub
-4. Configura las variables de entorno en Project Settings
-5. Deploy automático desde `main`
-
-### Opción 2: Desde CLI
+`vercel.json` define un cron diario (08:00 UTC) que llama a `/api/cron/emails`: procesa
+los `scheduled_emails` pendientes (recordatorios 24 h y recurrencia). Vercel envía
+automáticamente `Authorization: Bearer $CRON_SECRET`. Para probarlo en local:
 
 ```bash
-# Instalar Vercel CLI
-npm i -g vercel
-
-# Login
-vercel login
-
-# Desplegar
-vercel
+curl -H "Authorization: Bearer $CRON_SECRET" http://localhost:3000/api/cron/emails
 ```
 
-### Variables de Entorno en Vercel
+## Restricciones de la demo (importante)
 
-En Vercel Dashboard → Project Settings → Environment Variables:
+- **Ni una imagen, logo o texto** procede del Instagram/Facebook del negocio: identidad
+  visual original «Burbuja Calma» (huella de cinco burbujas) y fotos de stock marcadas
+  «imagen de muestra».
+- Solo datos públicos verificables: dirección, nombre comercial, posicionamiento «en
+  positivo» y productos veganos. Teléfono y horario son **placeholders**.
+- **Ningún precio es tarifa oficial**: todos los rangos llevan la etiqueta «orientativo»
+  (hasta que Cristina marque `es_precio_real = true` desde /admin, que pasa la etiqueta a
+  «desde X €»).
+- Las reseñas de Google no se reproducen literalmente (solo «4,7★, los peludos repiten»).
+- Formularios funcionales con aviso de demo; datos marcados `demo = true`, purgables.
 
-**Production + Preview + Development**:
-- `DATABASE_URL` → Tu connection string de Neon
-- `RESEND_API_KEY` → Tu API key de Resend
-- `RESEND_FROM_EMAIL` → Tu email verificado
-- `RESEND_TO_EMAIL_DEMO` → Email para demo
-- `NEXT_PUBLIC_APP_URL` → URL del sitio (https://...)
-- `NEXT_PUBLIC_IS_DEMO` → `true`
+## Checklist de paso a producción
 
-## 📂 Estructura del Proyecto
+- [ ] Quitar `robots: noindex` en `app/layout.tsx` y sustituir `public/robots.txt` por uno permisivo + sitemap.
+- [ ] Quitar el banner de demo (`components/layout/DemoBanner.tsx`) y los avisos «demo» de reservas/calculadora/legal.
+- [ ] `DEMO_MODE=false` y remitente de Resend con dominio propio verificado.
+- [ ] Confirmar con Cristina teléfono, WhatsApp real y horario; sustituir placeholders (`lib/site.ts`, `.env`).
+- [ ] Sustituir las fotos de stock por fotos reales de su Instagram (310 publicaciones: su mejor activo) con permiso de las familias.
+- [ ] Completar los textos legales con los datos reales del titular (RGPD/LSSI).
+- [ ] Revisar la matriz de precios con Cristina y marcar `es_precio_real` donde proceda.
+- [ ] Dominio propio sugerido: `perruqueriarealejo.com` o similar — **comprobar disponibilidad, no comprar sin su OK**.
+- [ ] Purgar los datos de prueba (`delete from bookings where demo; delete from leads where demo; …`).
+- [ ] Cambiar las credenciales del admin y el `CRON_SECRET`.
 
-```
-perruqueria-realejo/
-├── app/                    # Next.js App Router
-│   ├── page.tsx           # Home
-│   ├── layout.tsx         # Layout raíz
-│   ├── calculadora/        # Wizard de tarifas
-│   ├── servicios/         # Catálogo de servicios
-│   ├── filosofia/         # "Peluquería en positivo"
-│   ├── galeria/          # Antes/después
-│   ├── contacto/         # Mapa + WhatsApp
-│   ├── legal/            # Aviso legal, privacidad, cookies
-│   └── api/              # API routes
-├── components/            # Componentes React
-│   ├── calculator/       # Calculadora
-│   ├── services/         # Servicios
-│   └── layout/           # Nav, Footer, Banner
-├── lib/                   # Utilidades
-│   ├── db.ts            # Cliente Neon
-│   ├── services.ts      # Helper servicios
-│   └── email.ts         # Cliente Resend
-├── supabase/             # SQL schema + seeds
-│   ├── migrations/       # Esquema BD
-│   └── seeds/           # Datos iniciales
-└── public/              # Assets estáticos
-    ├── favicon.png      # Huella de burbujas
-    ├── header.png       # Logo
-    └── patron.png       # Patrón decorativo
-```
+## Mejoras post-venta (argumentos comerciales)
 
-## 🎨 Identidad Visual
+- **SEO local**: ahora mismo el negocio es invisible en Google fuera de directorios; la
+  web está preparada (schema.org LocalBusiness + FAQPage, metadatos completos) para
+  posicionar «peluquería canina Granada / Realejo» en cuanto se quite el noindex.
+- **Feed de Instagram real** en la galería (sus 310 publicaciones).
+- **Recordatorios por WhatsApp**: requiere WhatsApp Business API (coste y verificación);
+  en la demo el canal de recordatorio es el email.
+- **Versión en inglés**: el Realejo tiene muchos residentes internacionales; la
+  estructura ya está preparada para i18n.
+- Pagos online / señal (Stripe) si algún día interesa: fuera de la v1 a propósito.
 
-**Paleta "Burbuja Calma"**:
-- Azul cielo (`#A8D8F0`) — Principal
-- Crema (`#FFF8EE`) — Fondos
-- Coral (`#E46972`) — Botones y CTAs
-- Verde salvia (`#B7C9B5`) — Veganos y tratamientos
-- Gris oscuro (`#46505A`) — Texto
+## Credenciales de la demo
 
-**Tipografías**:
-- Fraunces — Titulares emocionales
-- Nunito Sans — Interfaz y cuerpo
+| Qué | Valor |
+| --- | --- |
+| Panel admin | `/admin` |
+| Usuaria | `demo@por2duros.com` |
+| Contraseña | `PerruqueriaDemo2026!` |
 
-## 🔒 Seguridad y Demo
+## Criterios de aceptación cubiertos
 
-**Restricciones legales**:
-- `noindex, nofollow` en metadata (demo)
-- Banner fijo: "Demo de propuesta — Por 2 Duros"
-- Precios como "orientativos" (nunca oficiales en demo)
-- Solo datos públicos verificables
-- Teléfono/email como placeholders
-
-**NO usar**:
-- Logo real del cliente
-- Fotos de su Instagram/Facebook
-- Reseñas literales de Google
-- Datos privados reales
-
-## 📋 Checklist Paso a Producción
-
-Cuando la clienta compre la demo:
-
-1. **Quitar `noindex`**
-   - Editar `/app/layout.tsx` → `metadata.robots.index: true`
-   - Editar `/public/robots.txt`
-
-2. **Sustituir placeholders**
-   - Teléfono real: `6XX XXX XXX` → número real
-   - Email real
-   - Confirmar horario: L–V 10:00–17:45
-
-3. **Fotos reales**
-   - Reemplazar placeholders con fotos de su Instagram
-   - Actualizar galería con antes/después
-
-4. **Logo real**
-   - Reemplazar wordmark con logo real (si desea)
-   - O mantener tipográfico actual
-
-5. **Precios reales**
-   - Desde /admin, marcar `es_precio_real = true`
-   - Etiqueta cambia a "desde X €"
-
-6. **Dominio propio**
-   - Sugerir: `perruqueriarealejo.com`
-   - Configurar en Vercel
-
-7. **Emails reales**
-   - Cambiar `RESEND_TO_EMAIL_DEMO` → email real
-   - Verificar dominio en Resend
-
-8. **Quitar banner demo**
-   - Eliminar `/components/layout/DemoBanner.tsx`
-
-9. **Datos seed**
-   - Eliminar reservas de ejemplo
-   - Limpiar leads de prueba
-
-10. **Transferir cuentas**
-    - Neon → cuenta cliente
-    - Resend → cuenta cliente
-    - Vercel → cuenta cliente
-
-## 📱 Criterios de Aceptación
-
-- [ ] Calculadora completa en móvil <45s
-- [ ] Rangos orientativos siempre visibles
-- [ ] CTAs funcionales (reserva + WhatsApp)
-- [ ] Navegación completa entre páginas
-- [ ] Banner demo visible en todas las páginas
-- [ ] `noindex` activo
-- [ ] Build sin errores
-- [ ] Desplegado en Vercel
-
-## 🐛 Troubleshooting
-
-### Build falla por DATABASE_URL
-
-Si el build falla con error de BD:
-- Verifica que `DATABASE_URL` está en `.env.local`
-- Usa una URL dummy local para el build
-- Las páginas con BD son dinámicas (`force-dynamic`)
-
-### Error de Neon
-
-Si obtienes "error connecting to database":
-- Verifica tu connection string
-- Confirma que el proyecto Neon existe
-- Revisa que la BD esté activa en Neon Console
-
-### Estilos no se aplican
-
-- Verifica que Tailwind CSS esté configurado
-- Limpia `.next` y vuelve a build
-- Revisa `/app/globals.css`
-
-## 📞 Soporte
-
-Para cualquier cuestión sobre esta demo:
-
-**Por 2 Duros**
-- Web: [https://por2duros.com](https://por2duros.com)
-- Email: hola@por2duros.com
-
----
-
-**Estado**: Demo funcional — Pendiente aprobación cliente
-**Fecha**: Junio 2024
-**Versión**: 1.0
+- Calculadora completa en móvil < 45 s y termina siempre en CTA de reserva/WhatsApp.
+- Reserva completa en móvil < 90 s.
+- Imposible duplicar un hueco (constraint `bookings_sin_solape`, probado con intentos simultáneos: el segundo recibe 409).
+- Cristina puede confirmar/cancelar citas, bloquear vacaciones y ver la ficha del perro desde el móvil.
+- Completar una cita programa el email de recurrencia (visible en /admin/emails) con re-reserva en un clic.
+- Cron de recordatorios extremo a extremo en modo demo.
+- CRUD de servicios y precios sin tocar código.
+- Ningún precio sin etiqueta «orientativo» salvo `es_precio_real = true`.
+- noindex + banner de demo en todas las páginas.
