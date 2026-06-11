@@ -1,0 +1,13 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "nextjs",
+  "installCommand": "npm ci --prefix perruqueria-realejo",
+  "buildCommand": "npm run build --prefix perruqueria-realejo",
+  "outputDirectory": "perruqueria-realejo/.next",
+  "crons": [
+    {
+      "path": "/api/cron/emails",
+      "schedule": "0 8 * * *"
+    }
+  ]
+}

@@ -41,6 +41,18 @@ cp .env.example .env.local   # rellena las variables
 npm run dev
 ```
 
+
+### Despliegue en Vercel
+
+El código de Next.js vive en `perruqueria-realejo/`, pero el repositorio se puede
+importar en Vercel desde la raíz. Para evitar despliegues vacíos/404 cuando el
+proyecto de Vercel apunta al root del repo, la raíz incluye `package.json` y
+`vercel.json` que delegan la instalación y el build a `perruqueria-realejo/` y
+publican `perruqueria-realejo/.next`.
+
+Si en Vercel se configura **Root Directory = `perruqueria-realejo`**, también
+funciona: se usará el `vercel.json` de esa carpeta con el mismo cron.
+
 ### Variables de entorno
 
 | Variable | Descripción |
