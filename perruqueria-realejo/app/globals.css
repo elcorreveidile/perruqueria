@@ -1,0 +1,161 @@
+/**
+ * Estilos Globales — Perruquería Canina Realejo
+ * Identidad visual: "Burbuja Calma"
+ */
+
+@import "tailwindcss";
+
+:root {
+  /* Paleta Burbuja Calma */
+  --color-sky: #A8D8F0;        /* Azul cielo (principal) */
+  --color-cream: #FFF8EE;      /* Crema (fondos) */
+  --color-coral: #E46972;      /* Coral (botones y CTAs) */
+  --color-sage: #B7C9B5;       /* Verde salvia (veganos, tratamientos) */
+  --color-ink: #46505A;        /* Gris oscuro (texto) */
+
+  /* Variables semánticas */
+  --background: var(--color-cream);
+  --foreground: var(--color-ink);
+  --primary: var(--color-sky);
+  --accent: var(--color-coral);
+  --success: var(--color-sage);
+}
+
+@theme inline {
+  /* Colores principales */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-accent: var(--accent);
+  --color-success: var(--success);
+
+  /* Paleta completa */
+  --color-sky: var(--color-sky);
+  --color-cream: var(--color-cream);
+  --color-coral: var(--color-coral);
+  --color-sage: var(--color-sage);
+  --color-ink: var(--color-ink);
+
+  /* Tipografías (se cargarán localmente) */
+  --font-sans: 'Nunito Sans', system-ui, sans-serif;
+  --font-display: 'Fraunces', serif;
+
+  /* Espaciado y radii */
+  --radius-lg: 12px;
+  --radius-md: 8px;
+  --radius-sm: 4px;
+
+  /* Sombras sutiles */
+  --shadow-sm: 0 1px 2px rgba(70, 80, 90, 0.05);
+  --shadow-md: 0 4px 6px rgba(70, 80, 90, 0.08);
+  --shadow-lg: 0 10px 15px rgba(70, 80, 90, 0.12);
+}
+
+/* Reset base */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Mejoras de accesibilidad */
+*:focus-visible {
+  outline: 2px solid var(--color-coral);
+  outline-offset: 2px;
+}
+
+/* Tipografía display (titulares) */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+h1 {
+  font-size: clamp(2rem, 5vw, 3.5rem);
+}
+
+h2 {
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+}
+
+h3 {
+  font-size: clamp(1.5rem, 3vw, 2rem);
+}
+
+/* Links y botones */
+a, button {
+  color: inherit;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-family: inherit;
+}
+
+/* Animaciones sutiles */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Respectar preferencia de movimiento */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Utilidades */
+.container-custom {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+@media (min-width: 768px) {
+  .container-custom {
+    padding: 0 2rem;
+  }
+}
+
+/* Texto con énfasis */
+.text-emphasis {
+  font-style: italic;
+  color: var(--color-coral);
+}
+
+/* Patrón de burbujas (decorativo) */
+.bubble-pattern {
+  background-image: url('/patron.png');
+  background-repeat: repeat;
+  background-size: 200px;
+  opacity: 0.05;
+}

@@ -1,0 +1,9 @@
+# robots.txt para DEMO
+# Este sitio es una propuesta comercial NO oficial
+# No indexar hasta que el cliente apruebe y pase a producción
+
+User-agent: *
+Disallow: /
+
+# Sitemap (comentar cuando pase a producción)
+# Sitemap: https://perruqueriarealejo.com/sitemap.xml
