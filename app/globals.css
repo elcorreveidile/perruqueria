@@ -27,6 +27,17 @@ body {
   font-family: var(--font-sans);
 }
 
+/* Patrones del board de identidad (versiones claras, muy sutiles) */
+/* Huellas sobre crema: textura general de la web */
+.patron-huellas {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg fill='%23e46972' fill-opacity='0.05'%3E%3Cg transform='translate(20 20) rotate(-15)'%3E%3Ccircle cx='-6' cy='-4' r='2.6'/%3E%3Ccircle cx='0' cy='-7' r='2.8'/%3E%3Ccircle cx='6' cy='-4' r='2.6'/%3E%3Cellipse cx='0' cy='3' rx='5.6' ry='4.6'/%3E%3C/g%3E%3Cg transform='translate(80 75) rotate(20)'%3E%3Ccircle cx='-6' cy='-4' r='2.6'/%3E%3Ccircle cx='0' cy='-7' r='2.8'/%3E%3Ccircle cx='6' cy='-4' r='2.6'/%3E%3Cellipse cx='0' cy='3' rx='5.6' ry='4.6'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* Burbujas sobre celeste: footer y bloques destacados */
+.patron-burbujas {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140' viewBox='0 0 140 140'%3E%3Cg fill='none' stroke='%23a8d8f0' stroke-opacity='0.4' stroke-width='1.5'%3E%3Ccircle cx='25' cy='30' r='9'/%3E%3Ccircle cx='95' cy='20' r='5'/%3E%3Ccircle cx='120' cy='85' r='11'/%3E%3Ccircle cx='55' cy='105' r='6'/%3E%3Ccircle cx='75' cy='60' r='3.5'/%3E%3C/g%3E%3C/svg%3E");
+}
+
 h1,
 h2,
 h3,

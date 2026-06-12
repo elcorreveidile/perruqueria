@@ -62,7 +62,7 @@ const jsonLd = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="es" className={`${fraunces.variable} ${nunito.variable}`}>
-      <body className="flex min-h-screen flex-col antialiased">
+      <body className="patron-huellas flex min-h-screen flex-col antialiased">
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

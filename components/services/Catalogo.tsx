@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { IconoCategoria } from "@/components/Iconos";
 import { CATEGORIAS, labelCategoria, type Categoria, type Service } from "@/lib/types";
 import { formatoDuracion } from "@/lib/pricing";
 
@@ -42,10 +43,15 @@ export function Catalogo({ services, rangos }: Props) {
               key={s.id}
               className="flex flex-col rounded-3xl border border-cielo/40 bg-white p-6 shadow-sm transition-shadow hover:shadow-md"
             >
-              <p className="text-xs font-bold uppercase tracking-wide text-coral">
-                {labelCategoria(s.categoria)}
-              </p>
-              <h2 className="mt-1 text-xl">{s.nombre}</h2>
+              <div className="flex items-center gap-2">
+                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-cielo/30 text-ciruela">
+                  <IconoCategoria categoria={s.categoria} className="h-5 w-5" />
+                </span>
+                <p className="text-xs font-bold uppercase tracking-wide text-coral">
+                  {labelCategoria(s.categoria)}
+                </p>
+              </div>
+              <h2 className="mt-3 text-xl">{s.nombre}</h2>
               <p className="mt-2 flex-1 text-sm text-tinta-suave">{s.descripcion_corta}</p>
               <p className="mt-3 text-sm">
                 ⏱ {formatoDuracion(s.duracion_min, s.duracion_max)}

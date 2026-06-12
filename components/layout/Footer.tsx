@@ -9,7 +9,7 @@ export function Footer() {
   if (pathname?.startsWith("/admin")) return null;
 
   return (
-    <footer className="border-t border-cielo/40 bg-cielo-claro/50 pb-24">
+    <footer className="patron-burbujas border-t border-cielo/40 bg-cielo-claro/50 pb-24">
       <div className="mx-auto grid max-w-6xl gap-8 px-4 py-10 sm:grid-cols-3">
         <div>
           <div className="flex items-center gap-2">

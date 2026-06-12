@@ -149,7 +149,7 @@ export default function Home() {
       </section>
 
       {/* Prueba social */}
-      <section className="bg-cielo-claro/60">
+      <section className="patron-burbujas bg-cielo-claro/60">
         <div className="mx-auto max-w-3xl px-4 py-12 text-center">
           <p className="font-display text-3xl">⭐ 4,7 en Google</p>
           <p className="mt-3 text-lg text-tinta-suave">

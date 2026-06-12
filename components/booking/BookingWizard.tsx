@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { format } from "date-fns";
+import { IconoCategoria } from "@/components/Iconos";
 import { IMG, IMG_TAMANOS } from "@/lib/imagenes";
 import { whatsappLink } from "@/lib/site";
 import {
@@ -191,12 +192,17 @@ export function BookingWizard({ services }: Props) {
                   setServicio(s);
                   setPaso(1);
                 }}
-                className={`rounded-2xl border-2 p-4 text-left transition-colors ${
+                className={`flex items-center gap-3 rounded-2xl border-2 p-4 text-left transition-colors ${
                   servicio?.id === s.id ? "border-coral bg-coral/5" : "border-cielo/50 hover:border-coral"
                 }`}
               >
-                <span className="block font-bold">{s.nombre}</span>
-                <span className="text-xs text-tinta-suave">{s.descripcion_corta}</span>
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-cielo/30 text-ciruela">
+                  <IconoCategoria categoria={s.categoria} className="h-5 w-5" />
+                </span>
+                <span>
+                  <span className="block font-bold">{s.nombre}</span>
+                  <span className="text-xs text-tinta-suave">{s.descripcion_corta}</span>
+                </span>
               </button>
             ))}
           </div>
