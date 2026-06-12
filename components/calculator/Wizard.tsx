@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useMemo, useState } from "react";
+import { IconoCategoria } from "@/components/Iconos";
 import { IMG_TAMANOS } from "@/lib/imagenes";
 import { estimar, findPriceRow, formatoDuracion, formatoRango } from "@/lib/pricing";
 import { whatsappLink, ETIQUETA_ORIENTATIVO } from "@/lib/site";
@@ -191,12 +192,17 @@ export function Wizard({ services, prices }: Props) {
                     setServicio(s);
                     avanzar();
                   }}
-                  className={`rounded-2xl border-2 p-4 text-left transition-colors ${
+                  className={`flex items-center gap-3 rounded-2xl border-2 p-4 text-left transition-colors ${
                     servicio?.id === s.id ? "border-coral bg-coral/5" : "border-cielo/50 hover:border-coral"
                   }`}
                 >
-                  <span className="block font-bold">{s.nombre}</span>
-                  <span className="text-xs text-tinta-suave">{s.descripcion_corta}</span>
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-cielo/30 text-ciruela">
+                    <IconoCategoria categoria={s.categoria} className="h-5 w-5" />
+                  </span>
+                  <span>
+                    <span className="block font-bold">{s.nombre}</span>
+                    <span className="text-xs text-tinta-suave">{s.descripcion_corta}</span>
+                  </span>
                 </button>
               ))}
             </div>
