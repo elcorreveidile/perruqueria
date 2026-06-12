@@ -112,9 +112,9 @@ export function Wizard({ services, prices }: Props) {
                   <Image
                     src={IMG_TAMANOS[t.value]}
                     alt=""
-                    width={112}
+                    width={144}
                     height={144}
-                    className="h-16 w-14 shrink-0 rounded-xl object-cover object-bottom"
+                    className="h-16 w-16 shrink-0 rounded-xl object-cover"
                   />
                   <span>
                     <span className="block font-bold">{t.label}</span>
