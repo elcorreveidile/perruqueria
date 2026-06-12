@@ -147,7 +147,7 @@ export function BookingWizard({ services }: Props) {
         </h2>
         <p className="mt-3 text-tinta-suave">
           {pendiente
-            ? `Cristina revisará tu solicitud y te confirmaremos en cuanto pueda. Apuntado: ${servicio.nombre}, ${fechaBonita(fecha)} a las ${hora}.`
+            ? `Revisaremos tu solicitud y te confirmaremos en cuanto podamos. Apuntado: ${servicio.nombre}, ${fechaBonita(fecha)} a las ${hora}.`
             : `Nos vemos el ${fechaBonita(fecha)} a las ${hora} para el ${servicio.nombre.toLowerCase()} de ${ficha.nombre_perro}.`}
         </p>
         {ficha.email && (

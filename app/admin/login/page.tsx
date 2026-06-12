@@ -25,7 +25,7 @@ export default async function LoginPage({
 
   return (
     <div className="mx-auto max-w-md py-12">
-      <h1 className="text-center text-3xl">Hola, Cristina 👋</h1>
+      <h1 className="text-center text-3xl">Hola 👋</h1>
       <p className="mt-2 text-center text-sm text-tinta-suave">
         Entra para gestionar tu agenda, servicios y tarifas.
       </p>
