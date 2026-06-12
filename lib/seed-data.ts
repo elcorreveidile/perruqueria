@@ -1,7 +1,7 @@
 import type { AvailabilityRule, PriceRow, Service, Tamano, TipoPelo } from "./types";
 
-// Datos de demostración: se usan como fallback cuando Supabase no está
-// configurado y son la fuente de la semilla SQL (supabase/seed.sql).
+// Datos de demostración: se usan como fallback cuando la base de datos no
+// está configurada y son la fuente de la semilla SQL (db/seed.sql).
 // Todos los precios son rangos ORIENTATIVOS de mercado en Granada capital.
 
 type SeedService = Omit<Service, "id"> & { id: string };

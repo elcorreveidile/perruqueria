@@ -1,14 +1,14 @@
 import { guardarAjustes, guardarRecurrencia } from "@/lib/admin-actions";
 import { getServices, getSettings } from "@/lib/data";
-import { supabaseConfigured } from "@/lib/supabase/server";
+import { dbConfigured } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
 
 const inputCls = "mt-1 w-full rounded-full border border-cielo px-4 py-2 font-normal";
 
 export default async function AjustesPage() {
-  if (!supabaseConfigured()) {
-    return <p className="rounded-2xl bg-cielo-claro p-4 text-sm">Configura Supabase para cambiar los ajustes.</p>;
+  if (!dbConfigured()) {
+    return <p className="rounded-2xl bg-cielo-claro p-4 text-sm">Configura la base de datos (ver README) para cambiar los ajustes.</p>;
   }
 
   const [settings, services] = await Promise.all([

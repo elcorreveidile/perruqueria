@@ -1,5 +1,5 @@
 import { loginAction } from "@/lib/admin-actions";
-import { supabaseConfigured } from "@/lib/supabase/server";
+import { authConfigured } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
@@ -10,14 +10,14 @@ export default async function LoginPage({
 }) {
   const { error } = await searchParams;
 
-  if (!supabaseConfigured()) {
+  if (!authConfigured()) {
     return (
       <div className="mx-auto max-w-md py-16 text-center">
         <h1 className="text-2xl">Panel de administración</h1>
         <p className="mt-4 rounded-2xl bg-cielo-claro p-4 text-sm text-tinta-suave">
-          Supabase no está configurado en este despliegue. Define las variables de entorno
-          (ver README) para activar el panel: hasta entonces, la web pública funciona con
-          datos de muestra.
+          El acceso al panel no está configurado en este despliegue. Define las variables
+          de entorno <code>ADMIN_EMAIL</code> y <code>ADMIN_PASSWORD</code> (ver README):
+          hasta entonces, la web pública funciona con datos de muestra.
         </p>
       </div>
     );

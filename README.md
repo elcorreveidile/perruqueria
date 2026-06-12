@@ -5,8 +5,8 @@ Realejo, Granada): peluquería canina **en positivo**, con productos veganos. Co
 por [Por 2 Duros](https://por2duros.com) como propuesta — **no es el sitio oficial** y no
 existe todavía relación contractual con el negocio.
 
-**Stack:** Next.js 15 (App Router) · TypeScript · Tailwind CSS 4 · Supabase (datos +
-Auth) · Resend (emails) · Vercel (despliegue + cron).
+**Stack:** Next.js 15 (App Router) · TypeScript · Tailwind CSS 4 · Neon (Postgres
+serverless) · Resend (emails) · Vercel (despliegue + cron).
 
 ## Qué incluye
 
@@ -24,14 +24,16 @@ Auth) · Resend (emails) · Vercel (despliegue + cron).
 - **Fidelización automática:** recordatorio 24 h antes (Vercel Cron + Resend) y
   «recurrencia inteligente»: al marcar una cita como completada se programa el email «a
   [perro] ya le toca» con re-reserva en un clic.
-- **/admin** (Supabase Auth): agenda semanal, confirmar/cancelar/completar/no-show,
+- **/admin** (login con cookie firmada y credenciales por variables de entorno):
+  agenda semanal, confirmar/cancelar/completar/no-show,
   bloqueos de vacaciones en dos toques, CRUD de servicios y matriz de precios, leads con
   export CSV, panel de previsualización de emails programados y ajustes.
 - **Modo demo transparente:** `noindex` + `robots.txt` bloqueado, banner fijo de demo,
   todos los emails desviados a una dirección de pruebas, registros con `demo = true`.
 
-> La web pública funciona **incluso sin Supabase configurado** (usa los datos de muestra
-> embebidos de `lib/seed-data.ts`); el panel /admin y la persistencia requieren Supabase.
+> La web pública funciona **incluso sin base de datos configurada** (usa los datos de
+> muestra embebidos de `lib/seed-data.ts`); el panel /admin y la persistencia requieren
+> Neon (`DATABASE_URL`).
 
 ## Instalación
 
@@ -45,9 +47,10 @@ npm run dev
 
 | Variable | Descripción |
 | --- | --- |
-| `NEXT_PUBLIC_SUPABASE_URL` | URL del proyecto Supabase |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Clave anónima (solo para Auth del panel) |
-| `SUPABASE_SERVICE_ROLE_KEY` | Clave service_role (solo servidor) |
+| `DATABASE_URL` | Cadena de conexión de Neon (con `sslmode=require`) |
+| `ADMIN_EMAIL` | Email de acceso al panel /admin |
+| `ADMIN_PASSWORD` | Contraseña del panel /admin |
+| `AUTH_SECRET` | Secreto para firmar la cookie de sesión |
 | `RESEND_API_KEY` | API key de Resend |
 | `EMAIL_FROM` | Remitente verificado en Resend |
 | `DEMO_MODE` | `true` (por defecto): desvía todos los emails |
@@ -56,16 +59,17 @@ npm run dev
 | `NEXT_PUBLIC_SITE_URL` | URL pública del despliegue |
 | `NEXT_PUBLIC_WHATSAPP` | Número de WhatsApp (placeholder en demo) |
 
-### Base de datos (Supabase)
+### Base de datos (Neon)
 
-1. Crea un proyecto en [supabase.com](https://supabase.com).
-2. En el editor SQL ejecuta, por este orden:
-   - `supabase/migrations/0001_schema.sql` (esquema + constraint anti-solapamiento + RLS)
-   - `supabase/seed.sql` (13 servicios, matriz de precios completa, horario L–V
+1. Crea un proyecto en [console.neon.tech](https://console.neon.tech) (región UE).
+2. En el **SQL Editor** de Neon ejecuta, por este orden:
+   - `db/migrations/0001_schema.sql` (esquema + constraint anti-solapamiento)
+   - `db/seed.sql` (13 servicios, matriz de precios completa, horario L–V
      10:00–17:45 y 7 reservas de ejemplo en distintos estados)
-3. Crea la usuaria admin: **Authentication → Users → Add user**
-   - Email: `demo@por2duros.com` · Contraseña: `PerruqueriaDemo2026!` · Auto-confirm ✔
-   - (Credenciales de demo: cámbialas en cuanto la propuesta esté enseñada.)
+3. Copia la **Connection string** (botón «Connect») en la variable `DATABASE_URL`.
+4. El acceso a /admin no necesita tabla de usuarios: define `ADMIN_EMAIL`,
+   `ADMIN_PASSWORD` y `AUTH_SECRET`. (Credenciales de demo: cámbialas en cuanto la
+   propuesta esté enseñada.)
 
 ### Cron de recordatorios
 

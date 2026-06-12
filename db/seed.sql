@@ -128,5 +128,5 @@ select id, 'recurrencia', (fecha + interval '7 weeks' + time '10:00')::timestamp
 from bookings where nombre_perro = 'Lolo' and estado = 'completada';
 
 -- ── Usuario admin ─────────────────────────────────────────────────────
--- El usuario de Supabase Auth se crea desde el dashboard (ver README):
--- Authentication → Users → Add user → email demo@por2duros.com (confirmado).
+-- El acceso a /admin no usa tabla de usuarios: se configura con las
+-- variables de entorno ADMIN_EMAIL y ADMIN_PASSWORD (ver README).

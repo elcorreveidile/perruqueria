@@ -2,61 +2,56 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { getServiceById, getSettings } from "./data";
-import { emailWaitlist, enviarEmail } from "./emails";
-import { supabaseAdmin, supabaseAuthServer, supabaseConfigured } from "./supabase/server";
-import type { Booking, EstadoReserva } from "./types";
+import { cerrarSesion, credencialesValidas, iniciarSesion, sesionActiva } from "./auth";
+import { getBookingById, getServiceById, getSettings, notificarListaEspera } from "./data";
+import { dbConfigured, sql } from "./db";
+import type { EstadoReserva } from "./types";
 
 // ── Sesión ───────────────────────────────────────────────────────────
 
 export async function loginAction(formData: FormData) {
-  const supabase = await supabaseAuthServer();
-  if (!supabase) redirect("/admin/login?error=config");
   const email = String(formData.get("email") ?? "");
   const password = String(formData.get("password") ?? "");
-  const { error } = await supabase.auth.signInWithPassword({ email, password });
-  if (error) redirect("/admin/login?error=credenciales");
+  if (!credencialesValidas(email, password)) {
+    redirect("/admin/login?error=credenciales");
+  }
+  await iniciarSesion();
   redirect("/admin");
 }
 
 export async function logoutAction() {
-  const supabase = await supabaseAuthServer();
-  if (supabase) await supabase.auth.signOut();
+  await cerrarSesion();
   redirect("/admin/login");
+}
+
+async function requireAdmin(): Promise<boolean> {
+  return (await sesionActiva()) && dbConfigured();
 }
 
 // ── Agenda ───────────────────────────────────────────────────────────
 
 export async function cambiarEstadoReserva(formData: FormData) {
-  if (!supabaseConfigured()) return;
+  if (!(await requireAdmin())) return;
   const id = String(formData.get("id"));
   const estado = String(formData.get("estado")) as EstadoReserva;
-  const db = supabaseAdmin();
 
-  const { data } = await db.from("bookings").select("*").eq("id", id).single();
-  const booking = data as Booking | null;
+  const booking = await getBookingById(id);
   if (!booking) return;
 
-  await db.from("bookings").update({ estado }).eq("id", id);
+  await sql()`update bookings set estado = ${estado} where id = ${id}`;
   const settings = await getSettings();
 
   if (estado === "confirmada" && settings.recordatorios_activos) {
     // Recordatorio 24 h antes (si no existe ya)
-    const enviarEn = new Date(`${booking.fecha}T${String(booking.hora_inicio).slice(0, 5)}:00`);
+    const enviarEn = new Date(`${booking.fecha}T${booking.hora_inicio}:00`);
     enviarEn.setHours(enviarEn.getHours() - 24);
-    const { data: existente } = await db
-      .from("scheduled_emails")
-      .select("id")
-      .eq("booking_id", id)
-      .eq("tipo", "recordatorio_24h")
-      .is("enviado_at", null);
-    if (!existente?.length) {
-      await db.from("scheduled_emails").insert({
-        booking_id: id,
-        tipo: "recordatorio_24h",
-        enviar_en: enviarEn.toISOString(),
-        demo: true,
-      });
+    const existentes = await sql()`
+      select id from scheduled_emails
+      where booking_id = ${id} and tipo = 'recordatorio_24h' and enviado_at is null`;
+    if (existentes.length === 0) {
+      await sql()`
+        insert into scheduled_emails (booking_id, tipo, enviar_en, demo)
+        values (${id}, 'recordatorio_24h', ${enviarEn.toISOString()}, true)`;
     }
   }
 
@@ -66,35 +61,16 @@ export async function cambiarEstadoReserva(formData: FormData) {
     const semanas = service?.recurrencia_semanas ?? 7;
     const enviarEn = new Date(`${booking.fecha}T10:00:00`);
     enviarEn.setDate(enviarEn.getDate() + semanas * 7);
-    await db.from("scheduled_emails").insert({
-      booking_id: id,
-      tipo: "recurrencia",
-      enviar_en: enviarEn.toISOString(),
-      demo: true,
-    });
+    await sql()`
+      insert into scheduled_emails (booking_id, tipo, enviar_en, demo)
+      values (${id}, 'recurrencia', ${enviarEn.toISOString()}, true)`;
   }
 
   if (estado === "cancelada") {
-    await db.from("scheduled_emails").delete().eq("booking_id", id).is("enviado_at", null);
-    // Aviso al primero de la lista de espera de ese día
-    const { data: espera } = await db
-      .from("waitlist")
-      .select("*")
-      .eq("fecha_deseada", booking.fecha)
-      .is("notificado_at", null)
-      .order("created_at")
-      .limit(1);
-    const primero = espera?.[0];
-    if (primero) {
-      const service = await getServiceById(primero.service_id);
-      await enviarEmail(
-        emailWaitlist(primero.nombre, primero.email, booking.fecha, service?.nombre ?? "tu servicio")
-      );
-      await db
-        .from("waitlist")
-        .update({ notificado_at: new Date().toISOString() })
-        .eq("id", primero.id);
-    }
+    await sql()`
+      delete from scheduled_emails
+      where booking_id = ${id} and enviado_at is null`;
+    await notificarListaEspera(booking.fecha);
   }
 
   revalidatePath("/admin/agenda");
@@ -104,32 +80,28 @@ export async function cambiarEstadoReserva(formData: FormData) {
 // ── Bloqueos ─────────────────────────────────────────────────────────
 
 export async function crearBloqueo(formData: FormData) {
-  if (!supabaseConfigured()) return;
+  if (!(await requireAdmin())) return;
   const desde = String(formData.get("desde"));
   const hasta = String(formData.get("hasta") || desde);
   const hora_inicio = String(formData.get("hora_inicio") || "00:00");
   const hora_fin = String(formData.get("hora_fin") || "23:59");
   const motivo = String(formData.get("motivo") || "");
 
-  const filas = [];
   const ini = new Date(`${desde}T00:00:00`);
   const fin = new Date(`${hasta}T00:00:00`);
   for (let d = new Date(ini); d <= fin; d.setDate(d.getDate() + 1)) {
-    filas.push({
-      fecha: d.toISOString().slice(0, 10),
-      hora_inicio,
-      hora_fin,
-      motivo,
-    });
+    const fecha = d.toISOString().slice(0, 10);
+    await sql()`
+      insert into blocked_slots (fecha, hora_inicio, hora_fin, motivo)
+      values (${fecha}, ${hora_inicio}, ${hora_fin}, ${motivo})`;
   }
-  await supabaseAdmin().from("blocked_slots").insert(filas);
   revalidatePath("/admin/bloqueos");
   revalidatePath("/admin/agenda");
 }
 
 export async function borrarBloqueo(formData: FormData) {
-  if (!supabaseConfigured()) return;
-  await supabaseAdmin().from("blocked_slots").delete().eq("id", String(formData.get("id")));
+  if (!(await requireAdmin())) return;
+  await sql()`delete from blocked_slots where id = ${String(formData.get("id"))}`;
   revalidatePath("/admin/bloqueos");
   revalidatePath("/admin/agenda");
 }
@@ -137,7 +109,7 @@ export async function borrarBloqueo(formData: FormData) {
 // ── Servicios ────────────────────────────────────────────────────────
 
 export async function guardarServicio(formData: FormData) {
-  if (!supabaseConfigured()) return;
+  if (!(await requireAdmin())) return;
   const id = String(formData.get("id") || "");
   const fila = {
     slug: String(formData.get("slug")),
@@ -155,14 +127,29 @@ export async function guardarServicio(formData: FormData) {
     recurrencia_semanas: Number(formData.get("recurrencia_semanas") || 7),
     en_calculadora: formData.get("en_calculadora") === "on",
     visible: formData.get("visible") === "on",
-    updated_at: new Date().toISOString(),
   };
-  const db = supabaseAdmin();
   if (id) {
-    await db.from("services").update(fila).eq("id", id);
+    await sql()`
+      update services set
+        slug = ${fila.slug}, nombre = ${fila.nombre}, categoria = ${fila.categoria},
+        descripcion_corta = ${fila.descripcion_corta},
+        descripcion_larga = ${fila.descripcion_larga},
+        para_quien = ${fila.para_quien}, incluye = ${fila.incluye},
+        duracion_min = ${fila.duracion_min}, duracion_max = ${fila.duracion_max},
+        recurrencia_semanas = ${fila.recurrencia_semanas},
+        en_calculadora = ${fila.en_calculadora}, visible = ${fila.visible},
+        updated_at = now()
+      where id = ${id}`;
   } else {
-    const { count } = await db.from("services").select("*", { count: "exact", head: true });
-    await db.from("services").insert({ ...fila, orden: (count ?? 0) + 1 });
+    await sql()`
+      insert into services (slug, nombre, categoria, descripcion_corta,
+        descripcion_larga, para_quien, incluye, duracion_min, duracion_max,
+        recurrencia_semanas, en_calculadora, visible, orden)
+      values (${fila.slug}, ${fila.nombre}, ${fila.categoria},
+        ${fila.descripcion_corta}, ${fila.descripcion_larga}, ${fila.para_quien},
+        ${fila.incluye}, ${fila.duracion_min}, ${fila.duracion_max},
+        ${fila.recurrencia_semanas}, ${fila.en_calculadora}, ${fila.visible},
+        (select coalesce(max(orden), 0) + 1 from services))`;
   }
   revalidatePath("/admin/servicios");
   revalidatePath("/servicios");
@@ -170,39 +157,34 @@ export async function guardarServicio(formData: FormData) {
 }
 
 export async function alternarVisibleServicio(formData: FormData) {
-  if (!supabaseConfigured()) return;
+  if (!(await requireAdmin())) return;
   const id = String(formData.get("id"));
   const visible = formData.get("visible") === "true";
-  await supabaseAdmin()
-    .from("services")
-    .update({ visible: !visible, updated_at: new Date().toISOString() })
-    .eq("id", id);
+  await sql()`
+    update services set visible = ${!visible}, updated_at = now() where id = ${id}`;
   revalidatePath("/admin/servicios");
   revalidatePath("/servicios");
 }
 
 export async function moverServicio(formData: FormData) {
-  if (!supabaseConfigured()) return;
+  if (!(await requireAdmin())) return;
   const id = String(formData.get("id"));
   const direccion = String(formData.get("direccion")); // "arriba" | "abajo"
-  const db = supabaseAdmin();
-  const { data } = await db.from("services").select("id, orden").order("orden");
-  if (!data) return;
+  const data = await sql()`select id, orden from services order by orden`;
   const idx = data.findIndex((s) => s.id === id);
   const otro = direccion === "arriba" ? idx - 1 : idx + 1;
   if (idx < 0 || otro < 0 || otro >= data.length) return;
-  await db.from("services").update({ orden: data[otro].orden }).eq("id", data[idx].id);
-  await db.from("services").update({ orden: data[idx].orden }).eq("id", data[otro].id);
+  await sql()`update services set orden = ${data[otro].orden} where id = ${data[idx].id}`;
+  await sql()`update services set orden = ${data[idx].orden} where id = ${data[otro].id}`;
   revalidatePath("/admin/servicios");
   revalidatePath("/servicios");
 }
 
 export async function borrarServicio(formData: FormData) {
-  if (!supabaseConfigured()) return;
+  if (!(await requireAdmin())) return;
   const id = String(formData.get("id"));
-  const db = supabaseAdmin();
-  await db.from("price_matrix").delete().eq("service_id", id);
-  await db.from("services").delete().eq("id", id);
+  await sql()`delete from price_matrix where service_id = ${id}`;
+  await sql()`delete from services where id = ${id}`;
   revalidatePath("/admin/servicios");
   revalidatePath("/servicios");
   redirect("/admin/servicios");
@@ -211,34 +193,40 @@ export async function borrarServicio(formData: FormData) {
 // ── Matriz de precios ────────────────────────────────────────────────
 
 export async function guardarPrecio(formData: FormData) {
-  if (!supabaseConfigured()) return;
+  if (!(await requireAdmin())) return;
   const id = String(formData.get("id") || "");
   const service_id = String(formData.get("service_id"));
-  const fila = {
-    service_id,
-    tamano: String(formData.get("tamano")),
-    tipo_pelo: String(formData.get("tipo_pelo") || "") || null,
-    precio_min: Number(formData.get("precio_min")),
-    precio_max: Number(formData.get("precio_max")),
-    recargo_nudos_pct: Number(formData.get("recargo_nudos_pct") || 20),
-    es_precio_real: formData.get("es_precio_real") === "on",
-    updated_at: new Date().toISOString(),
-  };
-  const db = supabaseAdmin();
+  const tamano = String(formData.get("tamano"));
+  const tipo_pelo = String(formData.get("tipo_pelo") || "") || null;
+  const precio_min = Number(formData.get("precio_min"));
+  const precio_max = Number(formData.get("precio_max"));
+  const recargo = Number(formData.get("recargo_nudos_pct") || 20);
+  const es_precio_real = formData.get("es_precio_real") === "on";
+
   if (id) {
-    await db.from("price_matrix").update(fila).eq("id", id);
+    await sql()`
+      update price_matrix set
+        tamano = ${tamano}, tipo_pelo = ${tipo_pelo},
+        precio_min = ${precio_min}, precio_max = ${precio_max},
+        recargo_nudos_pct = ${recargo}, es_precio_real = ${es_precio_real},
+        updated_at = now()
+      where id = ${id}`;
   } else {
-    await db.from("price_matrix").insert(fila);
+    await sql()`
+      insert into price_matrix (service_id, tamano, tipo_pelo, precio_min,
+        precio_max, recargo_nudos_pct, es_precio_real)
+      values (${service_id}, ${tamano}, ${tipo_pelo}, ${precio_min},
+        ${precio_max}, ${recargo}, ${es_precio_real})`;
   }
   revalidatePath(`/admin/servicios/${service_id}`);
   revalidatePath("/servicios");
 }
 
 export async function borrarPrecio(formData: FormData) {
-  if (!supabaseConfigured()) return;
+  if (!(await requireAdmin())) return;
   const id = String(formData.get("id"));
   const service_id = String(formData.get("service_id"));
-  await supabaseAdmin().from("price_matrix").delete().eq("id", id);
+  await sql()`delete from price_matrix where id = ${id}`;
   revalidatePath(`/admin/servicios/${service_id}`);
   revalidatePath("/servicios");
 }
@@ -246,26 +234,29 @@ export async function borrarPrecio(formData: FormData) {
 // ── Ajustes ──────────────────────────────────────────────────────────
 
 export async function guardarAjustes(formData: FormData) {
-  if (!supabaseConfigured()) return;
-  await supabaseAdmin()
-    .from("settings")
-    .upsert({
-      id: 1,
-      margen_minutos: Number(formData.get("margen_minutos") || 10),
-      confirmacion_automatica: formData.get("confirmacion_automatica") === "on",
-      antelacion_min_horas: Number(formData.get("antelacion_min_horas") || 2),
-      horizonte_max_semanas: Number(formData.get("horizonte_max_semanas") || 6),
-      recordatorios_activos: formData.get("recordatorios_activos") === "on",
-    });
+  if (!(await requireAdmin())) return;
+  const margen = Number(formData.get("margen_minutos") || 10);
+  const auto = formData.get("confirmacion_automatica") === "on";
+  const antelacion = Number(formData.get("antelacion_min_horas") || 2);
+  const horizonte = Number(formData.get("horizonte_max_semanas") || 6);
+  const recordatorios = formData.get("recordatorios_activos") === "on";
+  await sql()`
+    insert into settings (id, margen_minutos, confirmacion_automatica,
+      antelacion_min_horas, horizonte_max_semanas, recordatorios_activos)
+    values (1, ${margen}, ${auto}, ${antelacion}, ${horizonte}, ${recordatorios})
+    on conflict (id) do update set
+      margen_minutos = excluded.margen_minutos,
+      confirmacion_automatica = excluded.confirmacion_automatica,
+      antelacion_min_horas = excluded.antelacion_min_horas,
+      horizonte_max_semanas = excluded.horizonte_max_semanas,
+      recordatorios_activos = excluded.recordatorios_activos`;
   revalidatePath("/admin/ajustes");
 }
 
 export async function guardarRecurrencia(formData: FormData) {
-  if (!supabaseConfigured()) return;
+  if (!(await requireAdmin())) return;
   const id = String(formData.get("id"));
-  await supabaseAdmin()
-    .from("services")
-    .update({ recurrencia_semanas: Number(formData.get("recurrencia_semanas") || 7) })
-    .eq("id", id);
+  const semanas = Number(formData.get("recurrencia_semanas") || 7);
+  await sql()`update services set recurrencia_semanas = ${semanas} where id = ${id}`;
   revalidatePath("/admin/ajustes");
 }

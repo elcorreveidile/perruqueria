@@ -1,5 +1,5 @@
 -- Esquema de la demo "Perruquería Canina Realejo"
--- Ejecutar en el editor SQL de Supabase (o con supabase db push).
+-- Ejecutar en el SQL Editor de Neon (console.neon.tech) o con psql.
 
 create extension if not exists btree_gist;
 
@@ -137,15 +137,6 @@ create table if not exists settings (
   recordatorios_activos boolean not null default true
 );
 
--- ── Seguridad ─────────────────────────────────────────────────────────
--- Todo el acceso a datos pasa por el servidor (service_role).
--- RLS activado sin políticas = denegado para anon/authenticated.
-alter table services enable row level security;
-alter table price_matrix enable row level security;
-alter table leads enable row level security;
-alter table availability_rules enable row level security;
-alter table blocked_slots enable row level security;
-alter table bookings enable row level security;
-alter table scheduled_emails enable row level security;
-alter table waitlist enable row level security;
-alter table settings enable row level security;
+-- Seguridad: todo el acceso a datos pasa por el servidor de Next.js con la
+-- cadena de conexión de Neon (DATABASE_URL); la base de datos no se expone
+-- nunca al navegador.

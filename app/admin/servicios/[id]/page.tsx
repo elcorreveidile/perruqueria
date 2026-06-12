@@ -6,7 +6,7 @@ import {
   guardarServicio,
 } from "@/lib/admin-actions";
 import { getPriceRows, getServices } from "@/lib/data";
-import { supabaseConfigured } from "@/lib/supabase/server";
+import { dbConfigured } from "@/lib/db";
 import { CATEGORIAS, TAMANOS, TIPOS_PELO, labelPelo, labelTamano } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
@@ -18,8 +18,8 @@ export default async function EditarServicioPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
-  if (!supabaseConfigured()) {
-    return <p className="rounded-2xl bg-cielo-claro p-4 text-sm">Configura Supabase para editar servicios.</p>;
+  if (!dbConfigured()) {
+    return <p className="rounded-2xl bg-cielo-claro p-4 text-sm">Configura la base de datos (ver README) para editar servicios.</p>;
   }
 
   const { id } = await params;

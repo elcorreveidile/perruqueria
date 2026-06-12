@@ -1,8 +1,6 @@
 import { revalidatePath } from "next/cache";
-import { getServiceById } from "@/lib/data";
-import { emailWaitlist, enviarEmail } from "@/lib/emails";
-import { supabaseAdmin, supabaseConfigured } from "@/lib/supabase/server";
-import type { Booking } from "@/lib/types";
+import { getBookingByToken, getServiceById, notificarListaEspera } from "@/lib/data";
+import { dbConfigured, sql } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
 
@@ -12,16 +10,6 @@ function fechaBonita(fecha: string): string {
     day: "numeric",
     month: "long",
   });
-}
-
-async function getBookingByToken(token: string): Promise<Booking | null> {
-  if (!supabaseConfigured()) return null;
-  const { data } = await supabaseAdmin()
-    .from("bookings")
-    .select("*")
-    .eq("token_cancelacion", token)
-    .single();
-  return (data as Booking) ?? null;
 }
 
 export default async function CancelarPage({
@@ -34,39 +22,16 @@ export default async function CancelarPage({
 
   async function cancelar() {
     "use server";
-    if (!supabaseConfigured()) return;
-    const db = supabaseAdmin();
-    const { data } = await db
-      .from("bookings")
-      .select("*")
-      .eq("token_cancelacion", token)
-      .single();
-    const b = data as Booking | null;
+    if (!dbConfigured()) return;
+    const b = await getBookingByToken(token);
     if (!b || b.estado === "cancelada" || b.estado === "completada") return;
 
-    await db.from("bookings").update({ estado: "cancelada" }).eq("id", b.id);
+    await sql()`update bookings set estado = 'cancelada' where id = ${b.id}`;
     // Los emails programados de esta cita dejan de tener sentido
-    await db.from("scheduled_emails").delete().eq("booking_id", b.id).is("enviado_at", null);
-
+    await sql()`
+      delete from scheduled_emails where booking_id = ${b.id} and enviado_at is null`;
     // Avisamos al primero de la lista de espera de ese día (orden de llegada)
-    const { data: espera } = await db
-      .from("waitlist")
-      .select("*")
-      .eq("fecha_deseada", b.fecha)
-      .is("notificado_at", null)
-      .order("created_at")
-      .limit(1);
-    const primero = espera?.[0];
-    if (primero) {
-      const service = await getServiceById(primero.service_id);
-      await enviarEmail(
-        emailWaitlist(primero.nombre, primero.email, b.fecha, service?.nombre ?? "tu servicio")
-      );
-      await db
-        .from("waitlist")
-        .update({ notificado_at: new Date().toISOString() })
-        .eq("id", primero.id);
-    }
+    await notificarListaEspera(b.fecha);
     revalidatePath(`/reservas/cancelar/${token}`);
   }
 
@@ -103,7 +68,7 @@ export default async function CancelarPage({
       <div className="mt-6 rounded-3xl border border-cielo/40 bg-white p-6 text-sm">
         <p><strong>{service?.nombre}</strong></p>
         <p className="mt-1">
-          {fechaBonita(booking.fecha)}, {String(booking.hora_inicio).slice(0, 5)}
+          {fechaBonita(booking.fecha)}, {booking.hora_inicio}
         </p>
         <p className="mt-1 text-tinta-suave">
           {booking.nombre_perro} · {booking.nombre}

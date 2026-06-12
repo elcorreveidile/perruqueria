@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { randomUUID } from "crypto";
 import { getServiceBySlug, getSettings } from "@/lib/data";
+import { dbConfigured, esConflictoDeHueco, sql } from "@/lib/db";
 import { duracionHueco } from "@/lib/pricing";
 import { slotsLibres, toHHMM, toMin } from "@/lib/slots";
-import { supabaseAdmin, supabaseConfigured } from "@/lib/supabase/server";
 import {
   emailAvisoPeluquera,
   emailConfirmacionCliente,
@@ -81,28 +81,19 @@ export async function POST(req: NextRequest) {
     created_at: new Date().toISOString(),
   };
 
-  if (supabaseConfigured()) {
-    const db = supabaseAdmin();
-    const { error } = await db.from("bookings").insert({
-      id: booking.id,
-      service_id: booking.service_id,
-      fecha,
-      hora_inicio,
-      hora_fin,
-      nombre,
-      telefono,
-      email: booking.email,
-      nombre_perro,
-      raza: booking.raza,
-      tamano,
-      observaciones: booking.observaciones,
-      estado,
-      token_cancelacion: token,
-      demo: true,
-    });
-    if (error) {
+  if (dbConfigured()) {
+    try {
+      await sql()`
+        insert into bookings (id, service_id, fecha, hora_inicio, hora_fin,
+          nombre, telefono, email, nombre_perro, raza, tamano, observaciones,
+          estado, token_cancelacion, demo)
+        values (${booking.id}, ${booking.service_id}, ${fecha}, ${hora_inicio},
+          ${hora_fin}, ${nombre}, ${telefono}, ${booking.email}, ${nombre_perro},
+          ${booking.raza}, ${tamano}, ${booking.observaciones}, ${estado},
+          ${token}, true)`;
+    } catch (error) {
       // 23P01: constraint de exclusión anti-solapamiento
-      if (error.code === "23P01" || error.code === "23505") {
+      if (esConflictoDeHueco(error)) {
         return NextResponse.json(
           { error: "Ese hueco acaba de ocuparse. Elige otro, porfa 🐾" },
           { status: 409 }
@@ -116,12 +107,9 @@ export async function POST(req: NextRequest) {
     if (estado === "confirmada" && settings.recordatorios_activos) {
       const enviarEn = new Date(`${fecha}T${hora_inicio}:00`);
       enviarEn.setHours(enviarEn.getHours() - 24);
-      await db.from("scheduled_emails").insert({
-        booking_id: booking.id,
-        tipo: "recordatorio_24h",
-        enviar_en: enviarEn.toISOString(),
-        demo: true,
-      });
+      await sql()`
+        insert into scheduled_emails (booking_id, tipo, enviar_en, demo)
+        values (${booking.id}, 'recordatorio_24h', ${enviarEn.toISOString()}, true)`;
     }
   }
 
@@ -132,7 +120,7 @@ export async function POST(req: NextRequest) {
   return NextResponse.json({
     ok: true,
     estado,
-    demo: !supabaseConfigured(),
+    demo: !dbConfigured(),
     reserva: { fecha, hora_inicio, hora_fin, servicio: service.nombre },
   });
 }

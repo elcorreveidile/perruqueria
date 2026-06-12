@@ -1,4 +1,4 @@
-import { supabaseAdmin, supabaseConfigured } from "@/lib/supabase/server";
+import { dbConfigured, sql } from "@/lib/db";
 import { labelTamano, type Lead } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
@@ -10,16 +10,15 @@ const etiquetaOrigen: Record<string, string> = {
 };
 
 export default async function LeadsPage() {
-  if (!supabaseConfigured()) {
-    return <p className="rounded-2xl bg-cielo-claro p-4 text-sm">Configura Supabase para ver los leads.</p>;
+  if (!dbConfigured()) {
+    return <p className="rounded-2xl bg-cielo-claro p-4 text-sm">Configura la base de datos para ver los leads.</p>;
   }
 
-  const { data } = await supabaseAdmin()
-    .from("leads")
-    .select("*")
-    .order("created_at", { ascending: false })
-    .limit(200);
-  const leads = (data ?? []) as Lead[];
+  const data = await sql()`
+    select id, nombre, telefono, email, nombre_perro, raza, tamano,
+           observaciones, origen, resumen_tarifa, created_at::text
+    from leads order by created_at desc limit 200`;
+  const leads = data as unknown as Lead[];
 
   return (
     <div>

@@ -1,14 +1,14 @@
 import Link from "next/link";
 import { alternarVisibleServicio, moverServicio } from "@/lib/admin-actions";
 import { getServices } from "@/lib/data";
-import { supabaseConfigured } from "@/lib/supabase/server";
+import { dbConfigured } from "@/lib/db";
 import { labelCategoria } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminServiciosPage() {
-  if (!supabaseConfigured()) {
-    return <p className="rounded-2xl bg-cielo-claro p-4 text-sm">Configura Supabase para gestionar servicios.</p>;
+  if (!dbConfigured()) {
+    return <p className="rounded-2xl bg-cielo-claro p-4 text-sm">Configura la base de datos (ver README) para gestionar servicios.</p>;
   }
 
   const services = await getServices({ includeHidden: true });

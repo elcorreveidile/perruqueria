@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { logoutAction } from "@/lib/admin-actions";
-import { getAdminUser } from "@/lib/supabase/server";
+import { sesionActiva } from "@/lib/auth";
 import { HuellaBurbujas } from "@/components/layout/Logo";
 
 const enlaces = [
@@ -14,7 +14,7 @@ const enlaces = [
 ];
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
-  const user = await getAdminUser();
+  const user = await sesionActiva();
 
   return (
     <div className="min-h-screen bg-crema pb-24">
