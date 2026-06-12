@@ -12,7 +12,8 @@ panel de administración completo para gestionar el negocio sin tocar código.
 
 | | |
 |---|---:|
-| **Inversión inicial (pago único)** | **€1.785** |
+| **Inversión inicial (pago único, IVA incluido)** | **€1.785** |
+| Desglose | Base €1.475,21 + IVA 21% €309,79 |
 | **Mantenimiento Pro** | **GRATIS el primer año** · luego €49/mes |
 | Entrega | Demo ya disponible online |
 | Garantía | 15 días de devolución si no quedas satisfecho |
@@ -28,7 +29,7 @@ panel de administración completo para gestionar el negocio sin tocar código.
 | **Login / Registro** | Acceso seguro y privado al panel de administración. | +€147 |
 | **SEO básico** | Posicionamiento local «peluquería canina Granada / Realejo», datos estructurados schema.org y metadatos completos. | +€97 |
 | **Analytics** | Medición de visitas y comportamiento. | +€47 |
-| | **Total proyecto (pago único)** | **€1.785** |
+| | **Total proyecto (pago único, IVA incluido)** | **€1.785** |
 
 ---
 
@@ -36,7 +37,7 @@ panel de administración completo para gestionar el negocio sin tocar código.
 
 | Plan | Incluye | Precio |
 |---|---|---:|
-| **Pro** | Hosting, base de datos, envío de emails, copias de seguridad y actualizaciones. | **1.er año GRATIS**, después €49/mes |
+| **Pro** | Hosting, base de datos, envío de emails, copias de seguridad y actualizaciones. | **1.er año GRATIS**, después €49/mes (IVA incluido) |
 
 > El Mantenimiento Pro se incluye **gratis el primer año** en proyectos superiores a 999 €
 > (ahorro de €588).
@@ -62,7 +63,7 @@ Si se prefiere arrancar con lo imprescindible:
 | Panel de contenido | +€197 |
 | Login / Registro | +€147 |
 | **Total** | **€1.641** |
-| Mantenimiento Pro | 1.er año gratis, después €49/mes |
+| Mantenimiento Pro | 1.er año gratis, después €49/mes (IVA incluido) |
 
 ---
 
@@ -75,4 +76,6 @@ Si se prefiere arrancar con lo imprescindible:
 - ✅ **Gestión autónoma**: cambiar precios, ocultar o añadir servicios y bloquear vacaciones desde el móvil.
 - ✅ Primer año de mantenimiento, hosting y emails **incluido**.
 
-*Precios sin IVA. Propuesta válida durante 30 días.*
+*Precios en euros, IVA incluido (base imponible €1.475,21 + IVA 21% €309,79).*
+
+*Por 2 Duros · NIF 08916742X · C/ M.ª Magdalena, 5 · 29680 Estepona (Málaga)*
