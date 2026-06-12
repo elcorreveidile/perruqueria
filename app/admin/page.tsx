@@ -1,16 +1,16 @@
 import Link from "next/link";
 import { addDays, format } from "date-fns";
 import { getBookings, getServices } from "@/lib/data";
-import { supabaseConfigured } from "@/lib/supabase/server";
+import { dbConfigured } from "@/lib/db";
 import { TarjetaReserva } from "@/components/admin/TarjetaReserva";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminHome() {
-  if (!supabaseConfigured()) {
+  if (!dbConfigured()) {
     return (
       <p className="rounded-2xl bg-cielo-claro p-4 text-sm">
-        Configura Supabase (ver README) para activar el panel.
+        Configura la base de datos (ver README) para activar el panel.
       </p>
     );
   }

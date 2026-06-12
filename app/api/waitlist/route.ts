@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServiceBySlug } from "@/lib/data";
-import { supabaseAdmin, supabaseConfigured } from "@/lib/supabase/server";
+import { dbConfigured, sql } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
 
@@ -19,18 +19,15 @@ export async function POST(req: NextRequest) {
   const service = await getServiceBySlug(servicio);
   if (!service) return NextResponse.json({ error: "Servicio no encontrado" }, { status: 404 });
 
-  if (supabaseConfigured()) {
-    const { error } = await supabaseAdmin().from("waitlist").insert({
-      fecha_deseada: fecha,
-      service_id: service.id,
-      nombre,
-      telefono: telefono ?? "",
-      email,
-    });
-    if (error) {
+  if (dbConfigured()) {
+    try {
+      await sql()`
+        insert into waitlist (fecha_deseada, service_id, nombre, telefono, email)
+        values (${fecha}, ${service.id}, ${nombre}, ${telefono ?? ""}, ${email})`;
+    } catch (error) {
       console.error("[waitlist] error:", error);
       return NextResponse.json({ error: "No se pudo guardar" }, { status: 500 });
     }
   }
-  return NextResponse.json({ ok: true, demo: !supabaseConfigured() });
+  return NextResponse.json({ ok: true, demo: !dbConfigured() });
 }

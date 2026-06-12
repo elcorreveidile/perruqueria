@@ -1,13 +1,13 @@
 import { format } from "date-fns";
 import { borrarBloqueo, crearBloqueo } from "@/lib/admin-actions";
 import { getBlockedSlots } from "@/lib/data";
-import { supabaseConfigured } from "@/lib/supabase/server";
+import { dbConfigured } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
 
 export default async function BloqueosPage() {
-  if (!supabaseConfigured()) {
-    return <p className="rounded-2xl bg-cielo-claro p-4 text-sm">Configura Supabase para gestionar bloqueos.</p>;
+  if (!dbConfigured()) {
+    return <p className="rounded-2xl bg-cielo-claro p-4 text-sm">Configura la base de datos (ver README) para gestionar bloqueos.</p>;
   }
 
   const hoy = format(new Date(), "yyyy-MM-dd");

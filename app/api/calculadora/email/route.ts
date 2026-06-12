@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { emailResultadoCalculadora, enviarEmail } from "@/lib/emails";
-import { supabaseAdmin, supabaseConfigured } from "@/lib/supabase/server";
+import { dbConfigured, sql } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
 
@@ -24,20 +24,18 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Faltan datos" }, { status: 400 });
   }
 
-  if (supabaseConfigured()) {
-    await supabaseAdmin().from("leads").insert({
-      email: body.email,
-      origen: "calculadora",
-      resumen_tarifa: {
-        servicio: body.servicio,
-        tamano: body.tamano,
-        pelo: body.pelo,
-        estado: body.estado,
-        rango: body.rango,
-        duracion: body.duracion,
-      },
-      demo: true,
+  if (dbConfigured()) {
+    const resumen = JSON.stringify({
+      servicio: body.servicio,
+      tamano: body.tamano,
+      pelo: body.pelo,
+      estado: body.estado,
+      rango: body.rango,
+      duracion: body.duracion,
     });
+    await sql()`
+      insert into leads (email, origen, resumen_tarifa, demo)
+      values (${body.email}, 'calculadora', ${resumen}::jsonb, true)`;
   }
 
   const { ok } = await enviarEmail(

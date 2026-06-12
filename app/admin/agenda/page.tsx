@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { addDays, format, startOfWeek } from "date-fns";
 import { getBlockedSlots, getBookings, getServices } from "@/lib/data";
-import { supabaseConfigured } from "@/lib/supabase/server";
+import { dbConfigured } from "@/lib/db";
 import { TarjetaReserva } from "@/components/admin/TarjetaReserva";
 import { borrarBloqueo } from "@/lib/admin-actions";
 
@@ -12,8 +12,8 @@ export default async function AgendaPage({
 }: {
   searchParams: Promise<{ semana?: string }>;
 }) {
-  if (!supabaseConfigured()) {
-    return <p className="rounded-2xl bg-cielo-claro p-4 text-sm">Configura Supabase para activar la agenda.</p>;
+  if (!dbConfigured()) {
+    return <p className="rounded-2xl bg-cielo-claro p-4 text-sm">Configura la base de datos (ver README) para activar la agenda.</p>;
   }
 
   const { semana } = await searchParams;

@@ -1,4 +1,4 @@
-import { supabaseAdmin, supabaseConfigured } from "./supabase/server";
+import { dbConfigured, sql } from "./db";
 import { DEFAULT_SETTINGS, SEED_RULES, SEED_SERVICES, seedPriceRows } from "./seed-data";
 import type {
   AvailabilityRule,
@@ -9,19 +9,18 @@ import type {
   Settings,
 } from "./types";
 
-// Capa de lectura: usa Supabase si está configurado y, si no, los datos
+// Capa de lectura: usa Neon si está configurado y, si no, los datos
 // de muestra embebidos (la demo funciona sin backend).
 
 export async function getServices(opts?: { includeHidden?: boolean }): Promise<Service[]> {
-  if (!supabaseConfigured()) {
+  if (!dbConfigured()) {
     const all = SEED_SERVICES as Service[];
     return opts?.includeHidden ? all : all.filter((s) => s.visible);
   }
-  let query = supabaseAdmin().from("services").select("*").order("orden");
-  if (!opts?.includeHidden) query = query.eq("visible", true);
-  const { data, error } = await query;
-  if (error) throw error;
-  return (data ?? []) as Service[];
+  const rows = opts?.includeHidden
+    ? await sql()`select * from services order by orden`
+    : await sql()`select * from services where visible order by orden`;
+  return rows as Service[];
 }
 
 export async function getServiceBySlug(slug: string): Promise<Service | null> {
@@ -35,20 +34,25 @@ export async function getServiceById(id: string): Promise<Service | null> {
 }
 
 export async function getPriceRows(serviceId?: string): Promise<PriceRow[]> {
-  if (!supabaseConfigured()) {
+  if (!dbConfigured()) {
     const rows = seedPriceRows();
     return serviceId ? rows.filter((r) => r.service_id === serviceId) : rows;
   }
-  let query = supabaseAdmin().from("price_matrix").select("*");
-  if (serviceId) query = query.eq("service_id", serviceId);
-  const { data, error } = await query;
-  if (error) throw error;
-  return (data ?? []) as PriceRow[];
+  const rows = serviceId
+    ? await sql()`select * from price_matrix where service_id = ${serviceId}`
+    : await sql()`select * from price_matrix`;
+  return rows.map((r) => ({
+    ...r,
+    recargo_nudos_pct: Number(r.recargo_nudos_pct),
+    precio_min: Number(r.precio_min),
+    precio_max: Number(r.precio_max),
+  })) as PriceRow[];
 }
 
 export async function getSettings(): Promise<Settings> {
-  if (!supabaseConfigured()) return DEFAULT_SETTINGS;
-  const { data } = await supabaseAdmin().from("settings").select("*").eq("id", 1).single();
+  if (!dbConfigured()) return DEFAULT_SETTINGS;
+  const rows = await sql()`select * from settings where id = 1`;
+  const data = rows[0];
   if (!data) return DEFAULT_SETTINGS;
   return {
     margen_minutos: data.margen_minutos ?? DEFAULT_SETTINGS.margen_minutos,
@@ -60,13 +64,11 @@ export async function getSettings(): Promise<Settings> {
 }
 
 export async function getAvailabilityRules(): Promise<AvailabilityRule[]> {
-  if (!supabaseConfigured()) return SEED_RULES;
-  const { data, error } = await supabaseAdmin()
-    .from("availability_rules")
-    .select("*")
-    .eq("activo", true);
-  if (error) throw error;
-  return (data ?? []).map((r) => ({
+  if (!dbConfigured()) return SEED_RULES;
+  const rows = await sql()`
+    select id, dia_semana, hora_inicio::text, hora_fin::text, activo
+    from availability_rules where activo`;
+  return rows.map((r) => ({
     ...r,
     hora_inicio: String(r.hora_inicio).slice(0, 5),
     hora_fin: String(r.hora_fin).slice(0, 5),
@@ -74,33 +76,72 @@ export async function getAvailabilityRules(): Promise<AvailabilityRule[]> {
 }
 
 export async function getBlockedSlots(desde: string, hasta: string): Promise<BlockedSlot[]> {
-  if (!supabaseConfigured()) return [];
-  const { data, error } = await supabaseAdmin()
-    .from("blocked_slots")
-    .select("*")
-    .gte("fecha", desde)
-    .lte("fecha", hasta);
-  if (error) throw error;
-  return (data ?? []).map((b) => ({
+  if (!dbConfigured()) return [];
+  const rows = await sql()`
+    select id, fecha::text, hora_inicio::text, hora_fin::text, motivo
+    from blocked_slots
+    where fecha between ${desde} and ${hasta}
+    order by fecha, hora_inicio`;
+  return rows.map((b) => ({
     ...b,
     hora_inicio: String(b.hora_inicio).slice(0, 5),
     hora_fin: String(b.hora_fin).slice(0, 5),
   })) as BlockedSlot[];
 }
 
-export async function getBookings(desde: string, hasta: string): Promise<Booking[]> {
-  if (!supabaseConfigured()) return [];
-  const { data, error } = await supabaseAdmin()
-    .from("bookings")
-    .select("*")
-    .gte("fecha", desde)
-    .lte("fecha", hasta)
-    .order("fecha")
-    .order("hora_inicio");
-  if (error) throw error;
-  return (data ?? []).map((b) => ({
+const COLUMNAS_BOOKING = `id, service_id, fecha::text, hora_inicio::text, hora_fin::text,
+  nombre, telefono, email, nombre_perro, raza, tamano, observaciones,
+  estado, token_cancelacion, created_at::text`;
+
+function normalizarBooking(b: Record<string, unknown>): Booking {
+  return {
     ...b,
     hora_inicio: String(b.hora_inicio).slice(0, 5),
     hora_fin: String(b.hora_fin).slice(0, 5),
-  })) as Booking[];
+  } as Booking;
+}
+
+export async function getBookings(desde: string, hasta: string): Promise<Booking[]> {
+  if (!dbConfigured()) return [];
+  const rows = await sql().query(
+    `select ${COLUMNAS_BOOKING} from bookings
+     where fecha between $1 and $2
+     order by fecha, hora_inicio`,
+    [desde, hasta]
+  );
+  return (rows as Record<string, unknown>[]).map(normalizarBooking);
+}
+
+export async function getBookingById(id: string): Promise<Booking | null> {
+  if (!dbConfigured()) return null;
+  const rows = await sql().query(`select ${COLUMNAS_BOOKING} from bookings where id = $1`, [id]);
+  const b = (rows as Record<string, unknown>[])[0];
+  return b ? normalizarBooking(b) : null;
+}
+
+export async function getBookingByToken(token: string): Promise<Booking | null> {
+  if (!dbConfigured()) return null;
+  const rows = await sql().query(
+    `select ${COLUMNAS_BOOKING} from bookings where token_cancelacion = $1`,
+    [token]
+  );
+  const b = (rows as Record<string, unknown>[])[0];
+  return b ? normalizarBooking(b) : null;
+}
+
+/** Avisa por email al primero de la lista de espera de un día (orden de llegada). */
+export async function notificarListaEspera(fecha: string): Promise<void> {
+  if (!dbConfigured()) return;
+  const rows = await sql()`
+    select * from waitlist
+    where fecha_deseada = ${fecha} and notificado_at is null
+    order by created_at limit 1`;
+  const primero = rows[0];
+  if (!primero) return;
+  const service = await getServiceById(primero.service_id);
+  const { emailWaitlist, enviarEmail } = await import("./emails");
+  await enviarEmail(
+    emailWaitlist(primero.nombre, primero.email, fecha, service?.nombre ?? "tu servicio")
+  );
+  await sql()`update waitlist set notificado_at = now() where id = ${primero.id}`;
 }

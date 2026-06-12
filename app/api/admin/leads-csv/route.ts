@@ -1,26 +1,26 @@
 import { NextResponse } from "next/server";
-import { getAdminUser, supabaseAdmin, supabaseConfigured } from "@/lib/supabase/server";
+import { sesionActiva } from "@/lib/auth";
+import { dbConfigured, sql } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
 
-// Exportación CSV de leads (solo admin autenticada)
+// Exportación CSV de leads (solo con sesión de admin)
 export async function GET() {
-  if (!supabaseConfigured()) {
-    return NextResponse.json({ error: "Supabase no configurado" }, { status: 503 });
+  if (!dbConfigured()) {
+    return NextResponse.json({ error: "Base de datos no configurada" }, { status: 503 });
   }
-  const user = await getAdminUser();
-  if (!user) {
+  if (!(await sesionActiva())) {
     return NextResponse.json({ error: "No autorizado" }, { status: 401 });
   }
 
-  const { data } = await supabaseAdmin()
-    .from("leads")
-    .select("*")
-    .order("created_at", { ascending: false });
+  const data = await sql()`
+    select created_at::text, origen, nombre, telefono, email, nombre_perro,
+           raza, tamano, observaciones, resumen_tarifa
+    from leads order by created_at desc`;
 
   const cabecera = "fecha;origen;nombre;telefono;email;perro;raza;tamano;observaciones;resumen";
   const escapar = (v: unknown) => String(v ?? "").replaceAll(";", ",").replaceAll("\n", " ");
-  const filas = (data ?? []).map((l) =>
+  const filas = data.map((l) =>
     [
       l.created_at,
       l.origen,

@@ -1,47 +1,27 @@
-import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { COOKIE_NAME, verificarToken } from "@/lib/auth-token";
 
-// Protege /admin con Supabase Auth. Si Supabase no está configurado,
-// deja pasar y las páginas muestran el aviso de configuración.
+// Protege /admin con la sesión de cookie firmada. Si las credenciales no
+// están configuradas, deja pasar y las páginas muestran el aviso.
 export async function middleware(request: NextRequest) {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const anon = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-  if (!url || !anon) return NextResponse.next();
+  if (!process.env.ADMIN_EMAIL || !process.env.ADMIN_PASSWORD) {
+    return NextResponse.next();
+  }
 
-  let response = NextResponse.next({ request });
-
-  const supabase = createServerClient(url, anon, {
-    cookies: {
-      getAll() {
-        return request.cookies.getAll();
-      },
-      setAll(cookiesToSet: { name: string; value: string; options?: object }[]) {
-        cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value));
-        response = NextResponse.next({ request });
-        cookiesToSet.forEach(({ name, value, options }) =>
-          response.cookies.set(name, value, options)
-        );
-      },
-    },
-  });
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
+  const valida = await verificarToken(request.cookies.get(COOKIE_NAME)?.value);
   const esLogin = request.nextUrl.pathname === "/admin/login";
-  if (!user && !esLogin) {
+
+  if (!valida && !esLogin) {
     const loginUrl = request.nextUrl.clone();
     loginUrl.pathname = "/admin/login";
     return NextResponse.redirect(loginUrl);
   }
-  if (user && esLogin) {
+  if (valida && esLogin) {
     const adminUrl = request.nextUrl.clone();
     adminUrl.pathname = "/admin";
     return NextResponse.redirect(adminUrl);
   }
-
-  return response;
+  return NextResponse.next();
 }
 
 export const config = {
