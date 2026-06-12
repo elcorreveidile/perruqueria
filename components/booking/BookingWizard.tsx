@@ -1,8 +1,10 @@
 "use client";
 
+import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { format } from "date-fns";
+import { IMG, IMG_TAMANOS } from "@/lib/imagenes";
 import { whatsappLink } from "@/lib/site";
 import {
   TAMANOS,
@@ -141,7 +143,13 @@ export function BookingWizard({ services }: Props) {
     const pendiente = confirmada.estado === "pendiente";
     return (
       <div className="mt-8 rounded-3xl border border-salvia bg-white p-8 text-center">
-        <p className="text-5xl" aria-hidden="true">🐶</p>
+        <Image
+          src={IMG.perroToalla}
+          alt="Perro feliz recién bañado con su toalla (imagen ilustrativa)"
+          width={400}
+          height={210}
+          className="mx-auto h-40 w-64 rounded-2xl object-cover"
+        />
         <h2 className="mt-3 font-display text-3xl">
           {pendiente ? "¡Solicitud enviada!" : "¡Guau! Hueco apartado"}
         </h2>
@@ -211,12 +219,21 @@ export function BookingWizard({ services }: Props) {
                   setTamano(t.value);
                   setPaso(2);
                 }}
-                className={`rounded-2xl border-2 p-4 text-left transition-colors ${
+                className={`flex items-center gap-3 rounded-2xl border-2 p-3 text-left transition-colors ${
                   tamano === t.value ? "border-coral bg-coral/5" : "border-cielo/50 hover:border-coral"
                 }`}
               >
-                <span className="block font-bold">{t.label}</span>
-                <span className="text-xs text-tinta-suave">{t.detalle}</span>
+                <Image
+                  src={IMG_TAMANOS[t.value]}
+                  alt=""
+                  width={112}
+                  height={144}
+                  className="h-16 w-14 shrink-0 rounded-xl object-cover object-bottom"
+                />
+                <span>
+                  <span className="block font-bold">{t.label}</span>
+                  <span className="text-xs text-tinta-suave">{t.detalle}</span>
+                </span>
               </button>
             ))}
           </div>
