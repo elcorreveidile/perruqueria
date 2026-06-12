@@ -18,7 +18,7 @@ const faqs = [
   },
   {
     q: "¿Cuánto cuesta?",
-    a: "Depende del tamaño, el pelo y su estado. En la calculadora de la web tienes un rango orientativo al momento; el precio exacto te lo confirma Cristina al ver a tu perro.",
+    a: "Depende del tamaño, el pelo y su estado. En la calculadora de la web tienes un rango orientativo al momento; el precio exacto te lo confirmamos al ver a tu perro.",
   },
 ];
 
@@ -129,7 +129,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Cristina y su método */}
+      {/* El método */}
       <section className="mx-auto max-w-6xl px-4 py-14">
         <div className="grid items-center gap-10 md:grid-cols-2">
           <div className="relative order-2 md:order-1">
@@ -145,11 +145,11 @@ export default function Home() {
             <p className="mt-2 text-right text-xs text-tinta-suave">Imagen de muestra</p>
           </div>
           <div className="order-1 md:order-2">
-            <h2 className="text-3xl">Cristina y su método</h2>
+            <h2 className="text-3xl">Un método con alma</h2>
             <p className="mt-4 text-tinta-suave">
-              Cristina no «procesa» perros: los escucha. Antes de coger una tijera, observa
-              cómo está el perro ese día. Si necesita una pausa, se le da. Si algo le asusta,
-              se trabaja poquito a poco.
+              Aquí no se «procesan» perros: se les escucha. Antes de coger una tijera,
+              observamos cómo está el perro ese día. Si necesita una pausa, se le da. Si algo
+              le asusta, se trabaja poquito a poco.
             </p>
             <ul className="lista-huellas mt-6 space-y-3 text-sm">
               <li>El perro marca el ritmo de la sesión, no el reloj.</li>
@@ -172,6 +172,20 @@ export default function Home() {
             Al reservar online, te recordamos la cita el día antes y te avisamos cuando a tu
             perro le vuelva a tocar sesión, con un enlace para reservar en un clic. Tú no
             tienes que estar pendiente de nada.
+          </p>
+        </div>
+      </section>
+
+      {/* El tablón de la puerta */}
+      <section className="mx-auto max-w-6xl px-4 py-14">
+        <div className="rounded-3xl border-2 border-dashed border-cielo bg-white p-8 text-center">
+          <p className="text-3xl" aria-hidden="true">📌</p>
+          <h2 className="mt-2 text-2xl">El tablón de la puerta</h2>
+          <p className="mx-auto mt-3 max-w-xl text-sm text-tinta-suave">
+            Nuestra puerta es también el tablón del barrio: carteles de perros perdidos,
+            adopciones y avisos vecinales siempre tienen su hueco. Si se te ha perdido tu
+            peludo o quieres dar difusión a uno que busca casa, tráenos el cartel — lo
+            colgamos con mucho gusto. El Realejo cuida de sus perros, y nosotros también.
           </p>
         </div>
       </section>

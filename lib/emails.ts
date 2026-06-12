@@ -74,7 +74,7 @@ export function emailConfirmacionCliente(booking: Booking, service: Service): Em
       pendiente ? "Solicitud recibida" : "¡Hueco apartado!",
       `<p>Hola ${booking.nombre},</p>
       <p>${pendiente
-        ? `Hemos recibido tu solicitud de cita para <strong>${booking.nombre_perro}</strong>. Cristina la revisará y te confirmaremos en cuanto pueda (la agenda está muy llena, ¡buena señal!).`
+        ? `Hemos recibido tu solicitud de cita para <strong>${booking.nombre_perro}</strong>. La revisaremos y te confirmaremos en cuanto podamos (la agenda está muy llena, ¡buena señal!).`
         : `La cita de <strong>${booking.nombre_perro}</strong> está apartada. ¡Nos vemos pronto!`}</p>
       <table style="font-size:15px;margin:16px 0;">
         <tr><td style="padding:4px 12px 4px 0;color:#9aa3ab;">Servicio</td><td><strong>${service.nombre}</strong></td></tr>
@@ -166,7 +166,7 @@ export function emailResultadoCalculadora(
         <tr><td style="padding:4px 12px 4px 0;color:#9aa3ab;">Rango orientativo</td><td><strong style="color:#E46972;">${resumen.rango}</strong></td></tr>
         <tr><td style="padding:4px 12px 4px 0;color:#9aa3ab;">Duración estimada</td><td>${resumen.duracion}</td></tr>
       </table>
-      <p style="font-size:13px;">Tarifas orientativas de mercado en Granada. Cada peludo es un mundo: Cristina te confirma el precio exacto al verlo. Productos veganos incluidos siempre.</p>
+      <p style="font-size:13px;">Tarifas orientativas de mercado en Granada. Cada peludo es un mundo: te confirmamos el precio exacto al verlo. Productos veganos incluidos siempre.</p>
       <p style="margin:24px 0;"><a href="${SITE.url}/reservas" style="background:#E46972;color:#fff;text-decoration:none;padding:12px 24px;border-radius:999px;font-weight:bold;">Reserva ya tu hueco</a></p>`
     ),
   };

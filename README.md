@@ -85,7 +85,7 @@ curl -H "Authorization: Bearer $CRON_SECRET" http://localhost:3000/api/cron/emai
 - Solo datos públicos verificables: dirección, nombre comercial, posicionamiento «en
   positivo» y productos veganos. Teléfono y horario son **placeholders**.
 - **Ningún precio es tarifa oficial**: todos los rangos llevan la etiqueta «orientativo»
-  (hasta que Cristina marque `es_precio_real = true` desde /admin, que pasa la etiqueta a
+  (hasta que el negocio marque `es_precio_real = true` desde /admin, que pasa la etiqueta a
   «desde X €»).
 - Las reseñas de Google no se reproducen literalmente (solo «4,7★, los peludos repiten»).
 - Formularios funcionales con aviso de demo; datos marcados `demo = true`, purgables.
@@ -95,10 +95,10 @@ curl -H "Authorization: Bearer $CRON_SECRET" http://localhost:3000/api/cron/emai
 - [ ] Quitar `robots: noindex` en `app/layout.tsx` y sustituir `public/robots.txt` por uno permisivo + sitemap.
 - [ ] Quitar el banner de demo (`components/layout/DemoBanner.tsx`) y los avisos «demo» de reservas/calculadora/legal.
 - [ ] `DEMO_MODE=false` y remitente de Resend con dominio propio verificado.
-- [ ] Confirmar con Cristina teléfono, WhatsApp real y horario; sustituir placeholders (`lib/site.ts`, `.env`).
+- [ ] Confirmar con el negocio el nombre de la persona al frente (el copy de la demo es deliberadamente neutro), teléfono, WhatsApp real y horario; sustituir placeholders (`lib/site.ts`, `.env`).
 - [ ] Sustituir las fotos de stock por fotos reales de su Instagram (310 publicaciones: su mejor activo) con permiso de las familias.
 - [ ] Completar los textos legales con los datos reales del titular (RGPD/LSSI).
-- [ ] Revisar la matriz de precios con Cristina y marcar `es_precio_real` donde proceda.
+- [ ] Revisar la matriz de precios con el negocio y marcar `es_precio_real` donde proceda.
 - [ ] Dominio propio sugerido: `perruqueriarealejo.com` o similar — **comprobar disponibilidad, no comprar sin su OK**.
 - [ ] Purgar los datos de prueba (`delete from bookings where demo; delete from leads where demo; …`).
 - [ ] Cambiar las credenciales del admin y el `CRON_SECRET`.
@@ -109,6 +109,9 @@ curl -H "Authorization: Bearer $CRON_SECRET" http://localhost:3000/api/cron/emai
   web está preparada (schema.org LocalBusiness + FAQPage, metadatos completos) para
   posicionar «peluquería canina Granada / Realejo» en cuanto se quite el noindex.
 - **Feed de Instagram real** en la galería (sus 310 publicaciones).
+- **Tablón del barrio digital**: la puerta del local ya funciona como tablón (perros
+  perdidos, avisos del barrio); replicarlo en la web con carteles reales gestionados desde
+  /admin reforzaría el arraigo comunitario del negocio.
 - **Recordatorios por WhatsApp**: requiere WhatsApp Business API (coste y verificación);
   en la demo el canal de recordatorio es el email.
 - **Versión en inglés**: el Realejo tiene muchos residentes internacionales; la
@@ -120,7 +123,7 @@ curl -H "Authorization: Bearer $CRON_SECRET" http://localhost:3000/api/cron/emai
 | Qué | Valor |
 | --- | --- |
 | Panel admin | `/admin` |
-| Usuaria | `demo@por2duros.com` |
+| Usuario | `demo@por2duros.com` |
 | Contraseña | `PerruqueriaDemo2026!` |
 
 ## Criterios de aceptación cubiertos
@@ -128,7 +131,7 @@ curl -H "Authorization: Bearer $CRON_SECRET" http://localhost:3000/api/cron/emai
 - Calculadora completa en móvil < 45 s y termina siempre en CTA de reserva/WhatsApp.
 - Reserva completa en móvil < 90 s.
 - Imposible duplicar un hueco (constraint `bookings_sin_solape`, probado con intentos simultáneos: el segundo recibe 409).
-- Cristina puede confirmar/cancelar citas, bloquear vacaciones y ver la ficha del perro desde el móvil.
+- Desde /admin se puede confirmar/cancelar citas, bloquear vacaciones y ver la ficha del perro desde el móvil, sin conocimientos técnicos.
 - Completar una cita programa el email de recurrencia (visible en /admin/emails) con re-reserva en un clic.
 - Cron de recordatorios extremo a extremo en modo demo.
 - CRUD de servicios y precios sin tocar código.

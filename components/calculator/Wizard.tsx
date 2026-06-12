@@ -228,7 +228,7 @@ export function Wizard({ services, prices }: Props) {
             </div>
             <p className="mt-3 text-center text-xs text-tinta-suave">{ETIQUETA_ORIENTATIVO}.</p>
             <p className="mt-1 text-center text-xs text-tinta-suave">
-              Cada peludo es un mundo: Cristina te confirma el precio exacto al verlo. 🐾
+              Cada peludo es un mundo: te confirmamos el precio exacto al verlo. 🐾
             </p>
 
             <div className="mt-6 grid gap-3">
