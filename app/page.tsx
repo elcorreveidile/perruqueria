@@ -41,8 +41,8 @@ export default function Home() {
       <section className="relative overflow-hidden">
         <div className="absolute inset-0">
           <Image
-            src="https://images.unsplash.com/photo-1576201836106-db1758fd1c97?w=1800&q=75"
-            alt="Baño tranquilo a un perro feliz (imagen de muestra)"
+            src="/img/bano-hero.jpg"
+            alt="Baño tranquilo a un perro feliz (imagen ilustrativa)"
             fill
             priority
             sizes="100vw"
@@ -83,7 +83,7 @@ export default function Home() {
           </div>
         </div>
         <p className="absolute bottom-2 right-3 z-10 text-[10px] text-tinta-suave/80">
-          Imagen de muestra
+          Imagen ilustrativa
         </p>
       </section>
 
@@ -165,14 +165,14 @@ export default function Home() {
           <div className="relative order-2 md:order-1">
             <div className="overflow-hidden rounded-3xl shadow-lg">
               <Image
-                src="https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=900&q=75"
-                alt="Manos cuidando a un perro con suavidad (imagen de muestra)"
+                src="/img/cepillado.jpg"
+                alt="Cepillado tranquilo de un perro en la mesa de trabajo (imagen ilustrativa)"
                 width={900}
                 height={600}
                 className="h-full w-full object-cover"
               />
             </div>
-            <p className="mt-2 text-right text-xs text-tinta-suave">Imagen de muestra</p>
+            <p className="mt-2 text-right text-xs text-tinta-suave">Imagen ilustrativa</p>
           </div>
           <div className="order-1 md:order-2">
             <h2 className="text-3xl">Un método con alma</h2>

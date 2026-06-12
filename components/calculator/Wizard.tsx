@@ -1,7 +1,9 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useMemo, useState } from "react";
+import { IMG_TAMANOS } from "@/lib/imagenes";
 import { estimar, findPriceRow, formatoDuracion, formatoRango } from "@/lib/pricing";
 import { whatsappLink, ETIQUETA_ORIENTATIVO } from "@/lib/site";
 import {
@@ -23,15 +25,6 @@ interface Props {
 }
 
 const PASOS = ["Tamaño", "Pelo", "Estado", "Servicio", "Tu tarifa"];
-
-function SiluetaPerro({ escala }: { escala: number }) {
-  const size = 22 + escala * 9;
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-      <path d="M4.5 12c-1.5 0-2.5 1.2-2.5 2.6 0 .8.3 1.5.9 2l.6 4.4c.1.6.5 1 1.1 1h.8c.6 0 1-.4 1.1-1l.3-2h8.4l.3 2c.1.6.5 1 1.1 1h.8c.6 0 1-.4 1.1-1l.7-5.2c1.6-.5 2.8-2 2.8-3.8v-2c0-.6-.4-1-1-1h-1c-.4-1.2-1.5-2-2.8-2h-.7l-.6-1.6c-.2-.5-.8-.7-1.3-.4l-1.6 1c-.3.2-.5.5-.5.8V8c-2.5-1-5.5-1-8 0V12z" />
-    </svg>
-  );
-}
 
 export function Wizard({ services, prices }: Props) {
   const [paso, setPaso] = useState(0);
@@ -104,7 +97,7 @@ export function Wizard({ services, prices }: Props) {
             <legend className="font-display text-2xl">¿Cómo es tu peludo? 🐶</legend>
             <p className="mt-1 text-sm text-tinta-suave">Más o menos, no hace falta pesarlo.</p>
             <div className="mt-5 grid gap-3 sm:grid-cols-2">
-              {TAMANOS.map((t, i) => (
+              {TAMANOS.map((t) => (
                 <button
                   key={t.value}
                   type="button"
@@ -112,13 +105,17 @@ export function Wizard({ services, prices }: Props) {
                     setTamano(t.value);
                     avanzar();
                   }}
-                  className={`flex items-center gap-3 rounded-2xl border-2 p-4 text-left transition-colors ${
+                  className={`flex items-center gap-3 rounded-2xl border-2 p-3 text-left transition-colors ${
                     tamano === t.value ? "border-coral bg-coral/5" : "border-cielo/50 hover:border-coral"
                   }`}
                 >
-                  <span className="text-cielo" style={{ color: "#7db8d6" }}>
-                    <SiluetaPerro escala={i} />
-                  </span>
+                  <Image
+                    src={IMG_TAMANOS[t.value]}
+                    alt=""
+                    width={112}
+                    height={144}
+                    className="h-16 w-14 shrink-0 rounded-xl object-cover object-bottom"
+                  />
                   <span>
                     <span className="block font-bold">{t.label}</span>
                     <span className="text-xs text-tinta-suave">{t.detalle}</span>

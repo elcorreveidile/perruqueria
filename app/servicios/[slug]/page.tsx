@@ -1,6 +1,8 @@
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getPriceRows, getServiceBySlug } from "@/lib/data";
+import { imagenDeServicio } from "@/lib/imagenes";
 import { formatoDuracion, formatoRango } from "@/lib/pricing";
 import { ETIQUETA_ORIENTATIVO } from "@/lib/site";
 import { labelCategoria, labelPelo, labelTamano, TAMANOS } from "@/lib/types";
@@ -28,6 +30,19 @@ export default async function ServicioDetalle({
         {labelCategoria(service.categoria)}
       </p>
       <h1 className="mt-1 text-4xl">{service.nombre}</h1>
+
+      <div className="mt-6 overflow-hidden rounded-3xl shadow-md">
+        <Image
+          src={imagenDeServicio(service.slug)}
+          alt={`${service.nombre} (imagen ilustrativa)`}
+          width={1448}
+          height={1086}
+          priority
+          className="h-56 w-full object-cover sm:h-72"
+        />
+      </div>
+      <p className="mt-2 text-right text-xs text-tinta-suave">Imagen ilustrativa</p>
+
       <p className="mt-4 text-lg text-tinta-suave">{service.descripcion_larga}</p>
 
       <div className="mt-8 grid gap-6 sm:grid-cols-2">

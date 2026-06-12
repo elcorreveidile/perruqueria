@@ -1,12 +1,6 @@
 import type { NextConfig } from "next";
 
-const nextConfig: NextConfig = {
-  images: {
-    remotePatterns: [
-      { protocol: "https", hostname: "images.unsplash.com" },
-      { protocol: "https", hostname: "images.pexels.com" },
-    ],
-  },
-};
+// Todas las imágenes son locales (public/img); no hacen falta remotePatterns.
+const nextConfig: NextConfig = {};
 
 export default nextConfig;

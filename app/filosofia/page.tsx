@@ -21,14 +21,14 @@ export default function FilosofiaPage() {
 
       <div className="mt-8 overflow-hidden rounded-3xl shadow-lg">
         <Image
-          src="https://images.unsplash.com/photo-1552053831-71594a27632d?w=1200&q=75"
-          alt="Perro tranquilo y confiado (imagen de muestra)"
-          width={1200}
-          height={700}
+          src="/img/filosofia.jpg"
+          alt="Caricia tranquila a un perro relajado (imagen ilustrativa)"
+          width={1831}
+          height={859}
           className="h-64 w-full object-cover sm:h-80"
         />
       </div>
-      <p className="mt-2 text-right text-xs text-tinta-suave">Imagen de muestra</p>
+      <p className="mt-2 text-right text-xs text-tinta-suave">Imagen ilustrativa</p>
 
       <section className="mt-10 space-y-8">
         <div>
