@@ -6,9 +6,10 @@ import { useState } from "react";
 import { Wordmark } from "./Logo";
 
 const enlaces = [
+  { href: "/", label: "Inicio" },
   { href: "/servicios", label: "Servicios" },
-  { href: "/calculadora", label: "Calcula tu tarifa", destacado: true },
-  { href: "/filosofia", label: "En positivo" },
+  { href: "/filosofia", label: "Filosofía" },
+  { href: "/calculadora", label: "Calcula tu tarifa" },
   { href: "/galeria", label: "Galería" },
   { href: "/contacto", label: "Contacto" },
 ];
@@ -31,12 +32,8 @@ export function Header() {
             <Link
               key={e.href}
               href={e.href}
-              className={`rounded-full px-4 py-2 text-sm font-semibold transition-colors ${
-                e.destacado
-                  ? "bg-cielo text-tinta hover:bg-cielo/70"
-                  : pathname === e.href
-                    ? "text-coral"
-                    : "text-tinta hover:text-coral"
+              className={`rounded-full px-3.5 py-2 text-sm font-semibold transition-colors ${
+                pathname === e.href ? "text-coral" : "text-tinta hover:text-coral"
               }`}
             >
               {e.label}
@@ -46,7 +43,7 @@ export function Header() {
             href="/reservas"
             className="ml-2 rounded-full bg-coral px-5 py-2 text-sm font-bold text-white shadow-sm transition-colors hover:bg-coral-oscuro"
           >
-            Reserva cita
+            Reserva tu hueco
           </Link>
         </nav>
 
@@ -84,7 +81,7 @@ export function Header() {
             onClick={() => setAbierto(false)}
             className="mt-2 block rounded-full bg-coral px-5 py-3 text-center font-bold text-white"
           >
-            Reserva cita
+            Reserva tu hueco
           </Link>
         </nav>
       )}

@@ -37,82 +37,112 @@ export default function Home() {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
 
-      {/* Hero */}
+      {/* Hero a sangre completa: foto a la derecha, degradado crema a la izquierda */}
       <section className="relative overflow-hidden">
+        <div className="absolute inset-0">
+          <Image
+            src="https://images.unsplash.com/photo-1576201836106-db1758fd1c97?w=1800&q=75"
+            alt="Baño tranquilo a un perro feliz (imagen de muestra)"
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover object-[72%_center]"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-crema via-crema/90 to-crema/5" />
+        </div>
         <Burbujas />
-        <div className="mx-auto grid max-w-6xl items-center gap-10 px-4 py-14 md:grid-cols-2 md:py-20">
-          <div>
-            <p className="mb-3 inline-block rounded-full bg-salvia-claro px-4 py-1 text-sm font-bold text-tinta">
-              🌱 Productos veganos · Barrio del Realejo
-            </p>
-            <h1 className="text-4xl leading-tight md:text-5xl">
-              Peluquería canina <em className="text-coral">en positivo</em>
+        <div className="relative mx-auto max-w-6xl px-4 py-20 md:py-32">
+          <div className="max-w-xl">
+            <h1 className="font-display text-5xl leading-[1.05] text-ciruela md:text-6xl">
+              Peluquería
+              <br />
+              canina en
+              <br />
+              <em className="text-coral">positivo</em>
             </h1>
-            <p className="mt-4 text-xl font-semibold text-tinta-suave">
-              Sin prisas. Sin miedo. Sin estrés.
+            <p className="mt-6 text-lg font-bold text-coral">
+              Sin miedo. Sin prisas. Sin estrés.
             </p>
-            <p className="mt-4 max-w-md text-tinta-suave">
-              Aquí tu perro entra tranquilo y sale feliz. Lo demás —el baño, el corte, las
-              uñas— es solo la excusa.
+            <p className="mt-3 max-w-xs text-sm text-tinta-suave">
+              Un lugar donde tu perro se siente seguro, cuidado y feliz.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link
+                href="/reservas"
+                className="rounded-full bg-coral px-6 py-3 text-sm font-bold text-white shadow-md transition-colors hover:bg-coral-oscuro"
+              >
+                Reserva tu hueco
+              </Link>
+              <Link
                 href="/calculadora"
-                className="rounded-full bg-coral px-7 py-3.5 font-bold text-white shadow-md transition-colors hover:bg-coral-oscuro"
+                className="rounded-full border border-tinta/20 bg-white/85 px-6 py-3 text-sm font-bold text-tinta backdrop-blur transition-colors hover:border-coral hover:text-coral"
               >
                 Calcula tu tarifa
               </Link>
-              <Link
-                href="/reservas"
-                className="rounded-full border-2 border-tinta/20 bg-white px-7 py-3.5 font-bold text-tinta transition-colors hover:border-coral hover:text-coral"
-              >
-                Reserva cita
-              </Link>
             </div>
-          </div>
-          <div className="relative">
-            <div className="overflow-hidden rounded-3xl shadow-lg">
-              <Image
-                src="https://images.unsplash.com/photo-1576201836106-db1758fd1c97?w=900&q=75"
-                alt="Perro relajado durante una sesión de cuidado tranquila (imagen de muestra)"
-                width={900}
-                height={650}
-                priority
-                className="h-full w-full object-cover"
-              />
-            </div>
-            <p className="mt-2 text-right text-xs text-tinta-suave">Imagen de muestra</p>
           </div>
         </div>
+        <p className="absolute bottom-2 right-3 z-10 text-[10px] text-tinta-suave/80">
+          Imagen de muestra
+        </p>
       </section>
 
-      {/* Propuesta de valor */}
-      <section className="bg-white">
-        <div className="mx-auto grid max-w-6xl gap-6 px-4 py-14 sm:grid-cols-3">
+      {/* Franja de valores */}
+      <section className="border-b border-cielo/30 bg-white">
+        <div className="mx-auto grid max-w-6xl gap-8 px-4 py-12 sm:grid-cols-2 lg:grid-cols-4">
           {[
             {
-              icono: "🤍",
-              titulo: "En positivo, de verdad",
-              texto:
-                "Manejo sin miedo ni estrés, con psicología y todo el cariño del mundo. El bienestar de tu perro va por delante del acabado.",
+              icono: (
+                <svg viewBox="0 0 24 24" className="h-5 w-5" fill="currentColor" aria-hidden="true">
+                  <circle cx="7" cy="8" r="2.2" /><circle cx="12" cy="6" r="2.2" /><circle cx="17" cy="8" r="2.2" />
+                  <ellipse cx="12" cy="15.5" rx="4.8" ry="4" />
+                </svg>
+              ),
+              color: "bg-coral/15 text-coral",
+              titulo: "Manejo en positivo",
+              texto: "Refuerzo amable y respeto en cada baño.",
             },
             {
-              icono: "🌱",
+              icono: (
+                <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={1.8} aria-hidden="true">
+                  <path strokeLinecap="round" d="M5 19C5 11 11 5 19 5c0 8-6 14-14 14zM5 19c3-3 6-5 9-6" />
+                </svg>
+              ),
+              color: "bg-salvia-claro text-[#6f8a6c]",
               titulo: "Productos veganos",
-              texto:
-                "Champús y tratamientos específicos veganos, suaves con su piel y elegidos para cada tipo de manto.",
+              texto: "Respetuosos con su piel, con los animales y el planeta.",
             },
             {
-              icono: "📍",
-              titulo: "En el corazón del Realejo",
-              texto:
-                "Un local pequeño y tranquilo en la calle Molinos, donde cada perro recibe atención de tú a tú.",
+              icono: (
+                <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={1.8} aria-hidden="true">
+                  <circle cx="9" cy="8" r="3.2" />
+                  <path strokeLinecap="round" d="M3.5 19.5c.6-3.2 2.8-5 5.5-5s4.9 1.8 5.5 5M16.5 11.5c1.8 0 3.5 1.4 4 4.5" />
+                  <circle cx="17.5" cy="7.5" r="2.2" />
+                </svg>
+              ),
+              color: "bg-cielo/40 text-[#4e7d9b]",
+              titulo: "Atención individual",
+              texto: "Cada perro es único. Cada sesión también.",
+            },
+            {
+              icono: (
+                <svg viewBox="0 0 24 24" className="h-5 w-5" fill="currentColor" aria-hidden="true">
+                  <path d="M12 20.5l-7.2-7A4.6 4.6 0 0 1 11 6.7l1 1 1-1a4.6 4.6 0 0 1 6.2 6.8z" />
+                </svg>
+              ),
+              color: "bg-coral/15 text-coral",
+              titulo: "Bienestar animal",
+              texto: "Menos estrés. Más confianza.",
             },
           ].map((v) => (
-            <div key={v.titulo} className="rounded-3xl bg-crema p-7">
-              <p className="text-3xl" aria-hidden="true">{v.icono}</p>
-              <h2 className="mt-3 text-xl">{v.titulo}</h2>
-              <p className="mt-2 text-sm text-tinta-suave">{v.texto}</p>
+            <div key={v.titulo} className="flex items-start gap-3">
+              <span className={`mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${v.color}`}>
+                {v.icono}
+              </span>
+              <div>
+                <h2 className="text-base font-bold text-tinta">{v.titulo}</h2>
+                <p className="mt-1 text-sm text-tinta-suave">{v.texto}</p>
+              </div>
             </div>
           ))}
         </div>

@@ -14,13 +14,15 @@ export function HuellaBurbujas({ className = "h-9 w-9" }: { className?: string }
 
 export function Wordmark({ compact = false }: { compact?: boolean }) {
   return (
-    <span className="flex items-center gap-2">
-      <HuellaBurbujas />
-      <span className="font-display leading-tight">
-        <span className="block text-lg text-tinta">Perruquería</span>
+    <span className="flex items-center gap-2.5">
+      <HuellaBurbujas className="h-10 w-10" />
+      <span className="leading-none">
+        <span className="block font-display text-2xl font-semibold text-ciruela">
+          Realejo
+        </span>
         {!compact && (
-          <span className="-mt-1 block text-sm tracking-wide text-coral">
-            Canina Realejo
+          <span className="mt-1 block text-[9px] font-bold uppercase tracking-[0.22em] text-coral">
+            Canina · En positivo
           </span>
         )}
       </span>
